@@ -28,12 +28,12 @@ export function ProgressHeader({
         >
           <ArrowLeft className="h-5 w-5" />
         </button>
-        <span className="text-xs font-medium tracking-wide text-ink-sub">
+        <span className="text-[13px] font-medium tracking-wide text-ink-sub">
           <span className="font-mono font-semibold text-magenta">{stepLabel}</span>
           <span className="mx-1.5 text-border">·</span>
           {stepTitle}
         </span>
-        <span className="font-mono text-xs font-semibold text-ink-sub">
+        <span className="font-mono text-[13px] font-semibold text-ink-sub">
           {current} <span className="text-border">/</span> {total}
         </span>
       </div>

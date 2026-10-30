@@ -37,19 +37,19 @@ export function Step1Screen({
       />
 
       <div className="mb-3">
-        <p className="text-xs font-medium text-tone-deep">퍼스널컬러 기본 체크</p>
-        <h2 className="mt-1 font-display text-xl font-black text-ink">나의 기본 컬러 특성 알아보기</h2>
-        <p className="mt-2 text-[13px] leading-relaxed text-ink-sub">
+        <p className="text-[13px] font-medium text-tone-deep">퍼스널컬러 기본 체크</p>
+        <h2 className="mt-1 font-display text-[22px] font-black text-ink">나의 기본 컬러 특성 알아보기</h2>
+        <p className="mt-2 text-[15px] leading-relaxed text-ink-sub">
           각 문항에서 나에게 더 가깝거나, 평소 더 잘 어울린다고 느끼는 항목을 하나씩 선택하세요.
         </p>
       </div>
 
       <div className="mt-5 rounded-2xl bg-card p-5 shadow-card">
         <div className="mb-4 flex items-center gap-2">
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-magenta text-xs font-bold text-white">
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-magenta text-[13px] font-bold text-white">
             {question.id}
           </span>
-          <h3 className="text-base font-semibold text-ink">{question.title}</h3>
+          <h3 className="text-[17px] font-semibold text-ink">{question.title}</h3>
         </div>
 
         <div className="space-y-3">
@@ -68,14 +68,14 @@ export function Step1Screen({
       <div className="mt-6 flex gap-3">
         <button
           onClick={onBack}
-          className="flex-1 rounded-full border-2 border-border bg-card py-3.5 text-sm font-semibold text-ink-sub transition-colors active:scale-[0.98] hover:border-tone"
+          className="flex-1 rounded-full border-2 border-border bg-card py-3.5 text-[15px] font-semibold text-ink-sub transition-colors active:scale-[0.98] hover:border-tone"
         >
           이전
         </button>
         <button
           onClick={onNext}
           disabled={!selected}
-          className={`flex-[1.6] rounded-full py-3.5 text-sm font-semibold text-white transition-all active:scale-[0.98] ${
+          className={`flex-[1.6] rounded-full py-3.5 text-[15px] font-semibold text-white transition-all active:scale-[0.98] ${
             selected
               ? 'bg-magenta shadow-soft hover:bg-magenta-deep'
               : 'cursor-not-allowed bg-border'

@@ -19,14 +19,14 @@ export function OptionButton({ label, text, selected, onSelect }: OptionButtonPr
     >
       <div className="flex items-start gap-3">
         <span
-          className={`mt-0.5 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors ${
+          className={`mt-0.5 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-[15px] font-semibold transition-colors ${
             selected ? 'bg-magenta text-white' : 'bg-border/60 text-ink-sub'
           }`}
         >
           {selected ? <Check className="h-4 w-4" /> : label}
         </span>
         <p
-          className={`text-[15px] leading-relaxed transition-colors ${
+          className={`text-[17px] leading-relaxed transition-colors ${
             selected ? 'text-ink' : 'text-ink-sub'
           }`}
         >

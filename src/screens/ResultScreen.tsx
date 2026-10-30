@@ -95,8 +95,8 @@ export function ResultScreen({ result, gender, onRestart, onEditAnswers }: Resul
       {/* Title */}
       <div className="mb-5 flex items-center gap-2">
         <Sparkles className="h-5 w-5 text-magenta" />
-        <h2 className="font-display text-xl font-black text-ink">나의 예상 퍼스널컬러</h2>
-        <span className="ml-auto rounded-full bg-tone-soft/40 px-3 py-1 text-xs font-medium text-tone-deep">
+        <h2 className="font-display text-[22px] font-black text-ink">나의 예상 퍼스널컬러</h2>
+        <span className="ml-auto rounded-full bg-tone-soft/40 px-3 py-1 text-[13px] font-medium text-tone-deep">
           {GENDER_LABELS[gender]} 진단
         </span>
       </div>
@@ -109,12 +109,12 @@ export function ResultScreen({ result, gender, onRestart, onEditAnswers }: Resul
         }}
       >
         <div className="px-6 pb-6 pt-7 text-white">
-          <p className="font-mono text-xs tracking-[0.2em] opacity-90">RESULT</p>
-          <p className="mt-2 font-display text-[28px] font-black leading-tight">
+          <p className="font-mono text-[13px] tracking-[0.2em] opacity-90">RESULT</p>
+          <p className="mt-2 font-display text-[30px] font-black leading-tight">
             {isTie ? '복합형 특성' : RESULT_TITLES[displaySeason]}
           </p>
           {!isTie && (
-            <div className="mt-1 space-y-0.5 text-sm opacity-90">
+            <div className="mt-1 space-y-0.5 text-[15px] opacity-90">
               <p>1순위 계절 · {SEASON_META[displaySeason].label}</p>
               {secondSeason && <p>2순위 계절 · {SEASON_META[secondSeason].label}</p>}
             </div>
@@ -129,8 +129,8 @@ export function ResultScreen({ result, gender, onRestart, onEditAnswers }: Resul
             {tempIcon}
           </div>
           <div>
-            <p className="text-xs text-ink-sub">웜톤 · 쿨톤 예상</p>
-            <p className="text-base font-semibold text-ink">
+            <p className="text-[13px] text-ink-sub">웜톤 · 쿨톤 예상</p>
+            <p className="text-[17px] font-semibold text-ink">
               {temperature === 'warm'
                 ? '웜톤 예상'
                 : temperature === 'cool'
@@ -143,7 +143,7 @@ export function ResultScreen({ result, gender, onRestart, onEditAnswers }: Resul
 
       {/* Description */}
       <div className="mt-4 rounded-2xl bg-card p-5 shadow-soft">
-        <p className="text-[15px] leading-relaxed text-ink">
+        <p className="text-[17px] leading-relaxed text-ink">
           {isTie
             ? tieMsg ?? '두 가지 계절의 특성이 함께 나타납니다.'
             : RESULT_DESCRIPTIONS[displaySeason]}
@@ -152,11 +152,11 @@ export function ResultScreen({ result, gender, onRestart, onEditAnswers }: Resul
 
       {/* Scores */}
       <div className="mt-4 rounded-2xl bg-card p-5 shadow-soft">
-        <p className="mb-3 text-sm font-semibold text-ink">계절별 점수</p>
+        <p className="mb-3 text-[15px] font-semibold text-ink">계절별 점수</p>
         <div className="space-y-3">
           {scoreRows.map((row) => (
             <div key={row.label}>
-              <div className="mb-1 flex items-center justify-between text-[13px]">
+              <div className="mb-1 flex items-center justify-between text-[15px]">
                 <span className="flex items-center gap-1.5 text-ink-sub">
                   <span
                     className="h-2.5 w-2.5 rounded-full"
@@ -182,7 +182,7 @@ export function ResultScreen({ result, gender, onRestart, onEditAnswers }: Resul
 
       {/* Recommended palette */}
       <div className="mt-4 rounded-2xl bg-card p-5 shadow-soft">
-        <p className="mb-3 text-sm font-semibold text-ink">추천 컬러 팔레트</p>
+        <p className="mb-3 text-[15px] font-semibold text-ink">추천 컬러 팔레트</p>
         <div className="space-y-4">
           <PaletteRow label="1순위 컬러" season={displaySeason} />
           {secondSeason && <PaletteRow label="2순위 컬러" season={secondSeason} />}
@@ -191,7 +191,7 @@ export function ResultScreen({ result, gender, onRestart, onEditAnswers }: Resul
 
       {/* Notice */}
       <div className="mt-4 rounded-2xl border border-border bg-tone-soft/12 p-4">
-        <p className="text-[12.5px] leading-relaxed text-ink-sub">
+        <p className="text-[14px] leading-relaxed text-ink-sub">
           본 결과는 책의 내용을 바탕으로 구성한 입문용 셀프 체크입니다.
           <br />
           퍼스널컬러는 피부 표현, 윤곽, 명도·채도, 청탁감, 그리고 전체적인 조화를 함께 비교하며
@@ -205,20 +205,20 @@ export function ResultScreen({ result, gender, onRestart, onEditAnswers }: Resul
       <div className="mt-6 space-y-3" data-html2canvas-ignore="true">
         <button
           onClick={handleSave}
-          className="flex w-full items-center justify-center gap-2 rounded-full bg-magenta py-3.5 text-sm font-semibold text-white shadow-soft transition-colors active:scale-[0.98] hover:bg-magenta-deep"
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-magenta py-3.5 text-[15px] font-semibold text-white shadow-soft transition-colors active:scale-[0.98] hover:bg-magenta-deep"
         >
           결과 저장하기
         </button>
         <button
           onClick={onEditAnswers}
-          className="flex w-full items-center justify-center gap-2 rounded-full border-2 border-border bg-card py-3.5 text-sm font-semibold text-ink transition-colors active:scale-[0.98] hover:border-tone"
+          className="flex w-full items-center justify-center gap-2 rounded-full border-2 border-border bg-card py-3.5 text-[15px] font-semibold text-ink transition-colors active:scale-[0.98] hover:border-tone"
         >
           <Pencil className="h-4 w-4" />
           선택한 답변 수정하기
         </button>
         <button
           onClick={onRestart}
-          className="flex w-full items-center justify-center gap-2 rounded-full border-2 border-border bg-card py-3.5 text-sm font-semibold text-ink-sub transition-colors active:scale-[0.98] hover:border-tone"
+          className="flex w-full items-center justify-center gap-2 rounded-full border-2 border-border bg-card py-3.5 text-[15px] font-semibold text-ink-sub transition-colors active:scale-[0.98] hover:border-tone"
         >
           <RotateCcw className="h-4 w-4" />
           결과 처음부터 다시 확인하기
@@ -231,7 +231,7 @@ export function ResultScreen({ result, gender, onRestart, onEditAnswers }: Resul
 function PaletteRow({ label, season }: { label: string; season: Season }) {
   return (
     <div>
-      <p className="mb-2 text-[11px] font-medium text-ink-sub">{label}</p>
+      <p className="mb-2 text-[13px] font-medium text-ink-sub">{label}</p>
       <div className="grid grid-cols-5 gap-2">
         {RESULT_PALETTES[season].map((c) => (
           <div key={c.hex} className="flex flex-col items-center">
@@ -239,7 +239,7 @@ function PaletteRow({ label, season }: { label: string; season: Season }) {
               className="h-14 w-full rounded-xl border border-border"
               style={{ backgroundColor: c.hex }}
             />
-            <span className="mt-1.5 text-[10px] text-ink-sub">{c.name}</span>
+            <span className="mt-1.5 text-[12px] text-ink-sub">{c.name}</span>
           </div>
         ))}
       </div>

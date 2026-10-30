@@ -10,7 +10,7 @@ export function Footer() {
           />
         </a>
         <div className="mx-auto my-4 h-px w-16 bg-border" />
-        <p className="font-mono text-[11px] text-ink-sub/80">
+        <p className="font-mono text-[13px] text-ink-sub/80">
           © COLOR.M ·{' '}
           <a href="https://colorm.net" target="_blank" rel="noopener noreferrer" className="hover:text-magenta">
             colorm.net

@@ -34,15 +34,15 @@ export function Step2Screen({
       />
 
       <div className="mb-3">
-        <p className="text-xs font-medium text-tone-deep">4계절 컬러그룹 알아보기</p>
-        <h2 className="mt-1 font-display text-xl font-black text-ink">{group.name} 컬러</h2>
-        <p className="mt-2 text-[13px] leading-relaxed text-ink-sub">
+        <p className="text-[13px] font-medium text-tone-deep">4계절 컬러그룹 알아보기</p>
+        <h2 className="mt-1 font-display text-[22px] font-black text-ink">{group.name} 컬러</h2>
+        <p className="mt-2 text-[15px] leading-relaxed text-ink-sub">
           각 컬러 그룹에서 얼굴 가까이에 대었을 때 비교적 잘 어울릴 것 같은 색을 선택하세요.
         </p>
       </div>
 
       <div className="mt-3 rounded-xl border border-border bg-tone-soft/15 p-3">
-        <p className="text-[12px] leading-relaxed text-tone-deep">
+        <p className="text-[14px] leading-relaxed text-tone-deep">
           화면에 보이는 색은 스마트폰과 모니터 환경에 따라 실제 색과 다르게 보일 수 있습니다.
         </p>
       </div>
@@ -71,7 +71,7 @@ export function Step2Screen({
                   className="h-3 w-3 rounded-full"
                   style={{ backgroundColor: meta.color }}
                 />
-                <span className="text-sm font-semibold text-ink">{meta.label}</span>
+                <span className="text-[15px] font-semibold text-ink">{meta.label}</span>
               </div>
 
               <div className="flex gap-1.5">
@@ -84,7 +84,7 @@ export function Step2Screen({
                 ))}
               </div>
 
-              <p className="mt-2 text-[12px] leading-snug text-ink-sub">{palette.description}</p>
+              <p className="mt-2 text-[14px] leading-snug text-ink-sub">{palette.description}</p>
             </button>
           );
         })}
@@ -93,14 +93,14 @@ export function Step2Screen({
       <div className="mt-6 flex gap-3">
         <button
           onClick={onBack}
-          className="flex-1 rounded-full border-2 border-border bg-card py-3.5 text-sm font-semibold text-ink-sub transition-colors active:scale-[0.98] hover:border-tone"
+          className="flex-1 rounded-full border-2 border-border bg-card py-3.5 text-[15px] font-semibold text-ink-sub transition-colors active:scale-[0.98] hover:border-tone"
         >
           이전
         </button>
         <button
           onClick={onNext}
           disabled={!selectedSeason}
-          className={`flex-[1.6] rounded-full py-3.5 text-sm font-semibold text-white transition-all active:scale-[0.98] ${
+          className={`flex-[1.6] rounded-full py-3.5 text-[15px] font-semibold text-white transition-all active:scale-[0.98] ${
             selectedSeason
               ? 'bg-magenta shadow-soft hover:bg-magenta-deep'
               : 'cursor-not-allowed bg-border'

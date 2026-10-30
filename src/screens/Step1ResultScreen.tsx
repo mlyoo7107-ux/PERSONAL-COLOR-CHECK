@@ -27,7 +27,7 @@ export function Step1ResultScreen({ scores, onContinue, onBack }: Step1ResultScr
     <div className="animate-scale-in">
       <div className="mb-6 flex items-center gap-2">
         <Sparkles className="h-5 w-5 text-magenta" />
-        <span className="text-xs font-medium tracking-wide text-ink-sub">
+        <span className="text-[13px] font-medium tracking-wide text-ink-sub">
           STEP 1 · 중간 결과
         </span>
       </div>
@@ -38,12 +38,12 @@ export function Step1ResultScreen({ scores, onContinue, onBack }: Step1ResultScr
             {icon}
           </div>
           <div>
-            <p className="text-xs text-ink-sub">예상 톤</p>
-            <p className="font-display text-lg font-black text-ink">{label}</p>
+            <p className="text-[13px] text-ink-sub">예상 톤</p>
+            <p className="font-display text-[22px] font-black text-ink">{label}</p>
           </div>
         </div>
 
-        <p className="text-[15px] leading-relaxed text-ink">{message}</p>
+        <p className="text-[17px] leading-relaxed text-ink">{message}</p>
 
         <div className="mt-6 space-y-3">
           <ScoreRow label="웜톤 점수" value={scores.warm} color="#D3A04A" max={5} />
@@ -51,7 +51,7 @@ export function Step1ResultScreen({ scores, onContinue, onBack }: Step1ResultScr
         </div>
       </div>
 
-      <p className="mt-5 text-center text-[13px] leading-relaxed text-ink-sub">
+      <p className="mt-5 text-center text-[15px] leading-relaxed text-ink-sub">
         이제 4계절 컬러그룹을 비교하여
         <br />
         더 구체적인 컬러 방향을 알아보겠습니다.
@@ -60,13 +60,13 @@ export function Step1ResultScreen({ scores, onContinue, onBack }: Step1ResultScr
       <div className="mt-6 flex gap-3">
         <button
           onClick={onBack}
-          className="flex-1 rounded-full border-2 border-border bg-card py-3.5 text-sm font-semibold text-ink-sub transition-colors active:scale-[0.98] hover:border-tone"
+          className="flex-1 rounded-full border-2 border-border bg-card py-3.5 text-[15px] font-semibold text-ink-sub transition-colors active:scale-[0.98] hover:border-tone"
         >
           이전
         </button>
         <button
           onClick={onContinue}
-          className="flex-[2] rounded-full bg-magenta py-3.5 text-sm font-semibold text-white shadow-soft transition-all active:scale-[0.98] hover:bg-magenta-deep"
+          className="flex-[2] rounded-full bg-magenta py-3.5 text-[15px] font-semibold text-white shadow-soft transition-all active:scale-[0.98] hover:bg-magenta-deep"
         >
           <span className="flex items-center justify-center gap-1.5">
             4계절 컬러 진단 계속하기
@@ -91,7 +91,7 @@ function ScoreRow({
 }) {
   return (
     <div>
-      <div className="mb-1 flex items-center justify-between text-[13px]">
+      <div className="mb-1 flex items-center justify-between text-[15px]">
         <span className="text-ink-sub">{label}</span>
         <span className="font-semibold text-ink">{value}점</span>
       </div>
