@@ -8,14 +8,9 @@ interface IntroScreenProps {
 export function IntroScreen({ onStart }: IntroScreenProps) {
   return (
     <div className="animate-fade-in">
-      {/* Logo */}
+      {/* Title */}
       <div className="text-center pt-4">
-        <img
-          src={`${import.meta.env.BASE_URL}colorm-logo.png`}
-          alt="COLOR·M"
-          className="mx-auto h-8 w-auto"
-        />
-        <p className="mt-3 font-mono text-[11px] font-semibold tracking-[0.15em] text-magenta">
+        <p className="font-mono text-base font-semibold tracking-[0.12em] text-magenta">
           Personal Color Self Check
         </p>
       </div>
