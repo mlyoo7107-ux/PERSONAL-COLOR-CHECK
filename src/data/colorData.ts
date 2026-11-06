@@ -53,6 +53,54 @@ export const RESULT_TIES: Record<Season, string[]> = {
   winter: ['s1', 's5', 's8', 's9', 'p4', 'p10'].map((t) => `ties/winter-${t}.png`),
 };
 
+// ── COLOR.M 자료에서 가져온 스타일 이미지 (public/style) ──
+// 남성 결과 스타일 가이드: 계절 캐릭터(남성패션_넥타이.ai) + 셔츠·넥타이 코디(man 사계절 정장.ai)
+export const MALE_STYLE: Record<Season, { portrait: string; outfit: string }> = {
+  spring: { portrait: 'style/spring-man.jpg', outfit: 'style/spring-outfit.png' },
+  summer: { portrait: 'style/summer-man.jpg', outfit: 'style/summer-outfit.png' },
+  autumn: { portrait: 'style/autumn-man.jpg', outfit: 'style/autumn-outfit.png' },
+  winter: { portrait: 'style/winter-man.jpg', outfit: 'style/winter-outfit.png' },
+};
+
+// 계절별 패션·헤어 컬러 (퍼스널컬러 강의안_춘천기계공고 자료)
+export const SEASON_STYLE: Record<
+  Season,
+  { image: string; mood: string; fashion: string[]; hair: string[] }
+> = {
+  spring: {
+    image: 'style/spring-fashion.jpg',
+    mood: '밝고 따뜻하며 생기 있는 색상 (Light & Warm)',
+    fashion: ['아이보리', '밝은 베이지', '코랄 핑크', '살몬 핑크', '소프트 옐로우', '라이트 네이비', '민트 그린(포인트)'],
+    hair: ['밀크 브라운', '허니 브라운', '골드 브라운', '옐로우 브라운', '오렌지 브라운'],
+  },
+  summer: {
+    image: 'style/summer-fashion.jpg',
+    mood: '차갑고 부드러운 파스텔 톤 (Cool & Soft)',
+    fashion: ['화이트', '라이트 그레이', '실버 블루', '연보라', '말린 장미색', '쿨 핑크', '네이비'],
+    hair: ['애쉬 브라운', '쿨 브라운', '코코아 브라운', '매트 브라운', '로즈 브라운'],
+  },
+  autumn: {
+    image: 'style/autumn-fashion.jpg',
+    mood: '따뜻하고 깊이 있으며 차분한 색상 (Deep & Muted)',
+    fashion: ['베이지', '카멜', '모카 베이지', '올리브 그린', '브라운', '딥 네이비', '웜 네이비'],
+    hair: ['레드 브라운', '골든 브라운', '오렌지 브라운', '카키 브라운', '딥 초코 브라운'],
+  },
+  winter: {
+    image: 'style/winter-fashion.jpg',
+    mood: '선명하고 차가운 고채도 색상과 무채색 (Clear & Cool)',
+    fashion: ['블랙', '퓨어 화이트', '로열 블루', '딥 네이비', '트루 레드', '버건디(포인트)'],
+    hair: ['딥 블랙 브라운', '다크 브라운', '쿨 초코 브라운', '블루 블랙', '애쉬 블랙'],
+  },
+};
+
+// 계절별 전체 톤 차트 (나를 빛나게 하는 색 강의 자료)
+export const SEASON_CHARTS: Record<Season, string> = {
+  spring: 'style/spring-chart.png',
+  summer: 'style/summer-chart.png',
+  autumn: 'style/autumn-chart.png',
+  winter: 'style/winter-chart.png',
+};
+
 export const SEASON_META: Record<Season, { label: string; color: string; temp: Temperature }> = {
   spring: { label: '봄', color: '#F4D94E', temp: 'warm' },
   summer: { label: '여름', color: '#78B8D8', temp: 'cool' },

@@ -1,8 +1,10 @@
 import { ChevronRight } from 'lucide-react';
 import { ProgressHeader } from '@/components/ProgressHeader';
 import { OptionButton } from '@/components/OptionButton';
+import { QuestionNav } from '@/components/QuestionNav';
 import type { Step1Question, OptionId, Tone } from '@/data/questions';
 import type { Clarity } from '@/data/colorData';
+import { assetUrl } from '@/data/colorData';
 
 interface Step1ScreenProps {
   questions: Step1Question[];
@@ -11,6 +13,8 @@ interface Step1ScreenProps {
   onSelect: (questionId: number, optionId: OptionId, temperature?: Tone, clarity?: Clarity) => void;
   onBack: () => void;
   onNext: () => void;
+  onJump: (index: number) => void;
+  onFinishEdit?: () => void;
 }
 
 export function Step1Screen({
@@ -20,6 +24,8 @@ export function Step1Screen({
   onSelect,
   onBack,
   onNext,
+  onJump,
+  onFinishEdit,
 }: Step1ScreenProps) {
   const question = questions[currentIndex];
   const selected = answers[question.id];
@@ -34,6 +40,12 @@ export function Step1Screen({
         total={questions.length}
         onBack={onBack}
         progress={progress}
+      />
+      <QuestionNav
+        answered={questions.map((q) => Boolean(answers[q.id]))}
+        current={currentIndex}
+        onJump={onJump}
+        onFinishEdit={onFinishEdit}
       />
 
       <div className="mb-3">
@@ -53,6 +65,35 @@ export function Step1Screen({
         </div>
         {question.note && (
           <p className="-mt-1 mb-4 text-[14px] leading-relaxed text-ink-sub">{question.note}</p>
+        )}
+        {question.image && (
+          <div className="mb-4 rounded-xl bg-white p-2">
+            <img
+              src={assetUrl(question.image.src)}
+              alt={question.image.alt}
+              className="w-full"
+              draggable={false}
+            />
+            {question.image.labels && (
+              <div
+                className="mt-1 grid text-center text-[11px] leading-tight text-ink-sub"
+                style={{ gridTemplateColumns: `repeat(${question.image.labels.length}, minmax(0, 1fr))` }}
+              >
+                {question.image.labels.map((l) => (
+                  <span key={l}>{l}</span>
+                ))}
+              </div>
+            )}
+            {question.image.scale && (
+              <div className="mt-2 flex items-center gap-2 text-[12px] font-semibold text-tone-deep">
+                <span>{question.image.scale[0]}</span>
+                <span className="h-px flex-1 bg-border" />
+                <span>{question.image.scale[1]}</span>
+                <span className="h-px flex-1 bg-border" />
+                <span>{question.image.scale[2]}</span>
+              </div>
+            )}
+          </div>
         )}
 
         <div className="space-y-3">

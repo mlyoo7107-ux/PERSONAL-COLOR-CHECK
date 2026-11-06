@@ -35,6 +35,8 @@ export interface Step1Question {
   title: string;
   /** 문항 제목 아래 안내 문구 */
   note?: string;
+  /** 안내 문구 아래 참고 이미지 (public 폴더 기준 경로) + 이미지 아래 이름표 */
+  image?: { src: string; alt: string; labels?: string[]; scale?: [string, string, string] };
   options: Step1Option[];
 }
 
@@ -116,6 +118,12 @@ const FEMALE_QUESTIONS: Step1Question[] = [
     id: 3,
     title: '액세서리 색',
     note: '착용했을 때 얼굴이 가장 자연스러워 보이는 금속 쪽을 고르세요.',
+    image: {
+      src: 'style/rings.jpg',
+      alt: '골드, 샴페인 골드, 로즈 골드, 소프트 실버, 백금 반지',
+      labels: ['골드', '샴페인 골드', '로즈 골드', '소프트 실버', '백금'],
+      scale: ['웜', '뉴트럴', '쿨'],
+    },
     options: [
       {
         id: 'A',

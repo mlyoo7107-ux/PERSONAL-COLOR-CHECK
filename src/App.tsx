@@ -6,7 +6,8 @@ import { Step2Screen } from '@/screens/Step2Screen';
 import { ResultScreen } from '@/screens/ResultScreen';
 import { Footer } from '@/components/Footer';
 import { STEP1_QUESTIONS, type Gender, type OptionId, type Tone } from '@/data/questions';
-import { COLOR_GROUPS, TIE_GROUP } from '@/data/colorData';
+import { COLOR_GROUPS, TIE_GROUP, SEASON_META } from '@/data/colorData';
+import type { AnswerItem } from '@/screens/ResultScreen';
 import type { Season, Clarity } from '@/data/colorData';
 import {
   createEmptyScores,
@@ -17,6 +18,10 @@ import {
 
 type Screen = 'intro' | 'step1' | 'step1Result' | 'step2' | 'result';
 
+// 결과 화면 답변 목록에 보여 줄 짧은 이름
+const TONE_LABEL: Record<Tone, string> = { warm: '웜', neutral: '뉴트럴', cool: '쿨' };
+const CLARITY_LABEL: Record<Clarity, string> = { clear: '선명', soft: '부드러움' };
+
 function App() {
   const [screen, setScreen] = useState<Screen>('intro');
   const [gender, setGender] = useState<Gender>('female');
@@ -26,10 +31,65 @@ function App() {
   const [selections, setSelections] = useState<Record<string, Season | undefined>>({});
   const [scores, setScores] = useState<Scores>(createEmptyScores());
   const [result, setResult] = useState<DiagnosisResult | null>(null);
+  // 결과 화면에서 답변을 고치러 들어온 상태
+  const [editing, setEditing] = useState(false);
 
   const questions = STEP1_QUESTIONS[gender];
   // 남성은 STEP 2 마지막에 넥타이 비교 문항을 추가
   const step2Groups = gender === 'male' ? [...COLOR_GROUPS, TIE_GROUP] : COLOR_GROUPS;
+
+  const allAnswered =
+    questions.every((q) => answers[q.id]) && step2Groups.every((g) => selections[g.id]);
+
+  const showResult = () => {
+    setResult(computeDiagnosis(scores));
+    setEditing(false);
+    setScreen('result');
+    window.scrollTo(0, 0);
+  };
+
+  // 특정 문항으로 바로 이동
+  const jumpTo = (stage: 'step1' | 'step2', index: number) => {
+    if (stage === 'step1') setStep1Index(index);
+    else setStep2Index(index);
+    setScreen(stage);
+    window.scrollTo(0, 0);
+  };
+
+  const jumpFromResult = (stage: 'step1' | 'step2', index: number) => {
+    setEditing(true);
+    jumpTo(stage, index);
+  };
+
+  // 결과 화면의 "내 답변" 목록
+  const answerItems: AnswerItem[] = [
+    ...questions.map((q, i) => {
+      const opt = q.options.find((o) => o.id === answers[q.id]);
+      return {
+        stage: 'step1' as const,
+        index: i,
+        label: `${i + 1}. ${q.title}`,
+        value: opt
+          ? opt.heading ??
+            (opt.temperature
+              ? TONE_LABEL[opt.temperature]
+              : opt.clarity
+              ? CLARITY_LABEL[opt.clarity]
+              : opt.id)
+          : '미응답',
+      };
+    }),
+    ...step2Groups.map((g, i) => {
+      const season = selections[g.id];
+      return {
+        stage: 'step2' as const,
+        index: i,
+        label: g.title ?? `${g.name} 컬러`,
+        value: season ? SEASON_META[season].label : '미응답',
+        color: season ? SEASON_META[season].color : undefined,
+      };
+    }),
+  ];
 
   const startDiagnosis = (selected: Gender) => {
     // 다른 성별로 시작하면 이전 응답이 섞이지 않도록 초기화
@@ -103,8 +163,7 @@ function App() {
     if (step2Index < step2Groups.length - 1) {
       setStep2Index(step2Index + 1);
     } else {
-      setResult(computeDiagnosis(scores));
-      setScreen('result');
+      showResult();
     }
   };
 
@@ -124,13 +183,11 @@ function App() {
     setSelections({});
     setScores(createEmptyScores());
     setResult(null);
+    setEditing(false);
   };
 
-  const handleEditAnswers = () => {
-    // Keep selections and scores; go back to Step 1 start for editing
-    setStep1Index(0);
-    setScreen('step1');
-  };
+  // 수정 중이고 모든 문항에 답했을 때만 "결과로 바로 가기" 표시
+  const finishEdit = editing && allAnswered ? showResult : undefined;
 
   return (
     <div className="min-h-screen bg-canvas">
@@ -145,6 +202,8 @@ function App() {
             onSelect={handleStep1Select}
             onBack={handleStep1Back}
             onNext={handleStep1Next}
+            onJump={(i) => jumpTo('step1', i)}
+            onFinishEdit={finishEdit}
           />
         )}
 
@@ -167,6 +226,8 @@ function App() {
             onSelect={handleStep2Select}
             onBack={handleStep2Back}
             onNext={handleStep2Next}
+            onJump={(i) => jumpTo('step2', i)}
+            onFinishEdit={finishEdit}
           />
         )}
 
@@ -174,8 +235,9 @@ function App() {
           <ResultScreen
             result={result}
             gender={gender}
+            answerItems={answerItems}
             onRestart={handleRestart}
-            onEditAnswers={handleEditAnswers}
+            onJumpToAnswer={jumpFromResult}
           />
         )}
 

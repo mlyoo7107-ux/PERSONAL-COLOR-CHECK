@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import html2canvas from 'html2canvas';
 import {
   RotateCcw,
@@ -9,6 +9,7 @@ import {
   Droplet,
   CalendarCheck,
   ChevronRight,
+  ChevronDown,
 } from 'lucide-react';
 
 // COLOR.M 퍼스널컬러 진단 예약 링크 (colorm.net의 "퍼스널컬러 진단 예약하기"와 동일)
@@ -19,6 +20,9 @@ import {
   RESULT_TITLES,
   RESULT_KEYWORDS,
   RESULT_TIES,
+  MALE_STYLE,
+  SEASON_CHARTS,
+  SEASON_STYLE,
   SEASON_META,
   TIE_MESSAGES,
   assetUrl,
@@ -28,14 +32,31 @@ import { GENDER_LABELS, type Gender } from '@/data/questions';
 import type { DiagnosisResult } from '@/utils/scoring';
 import { tieKeyFor, NEUTRAL_LEAN_TEXT } from '@/utils/scoring';
 
+/** 결과 화면 "내 답변" 목록의 한 줄 */
+export interface AnswerItem {
+  stage: 'step1' | 'step2';
+  index: number;
+  label: string;
+  value: string;
+  color?: string;
+}
+
 interface ResultScreenProps {
   result: DiagnosisResult;
   gender: Gender;
+  answerItems: AnswerItem[];
   onRestart: () => void;
-  onEditAnswers: () => void;
+  onJumpToAnswer: (stage: 'step1' | 'step2', index: number) => void;
 }
 
-export function ResultScreen({ result, gender, onRestart, onEditAnswers }: ResultScreenProps) {
+export function ResultScreen({
+  result,
+  gender,
+  answerItems,
+  onRestart,
+  onJumpToAnswer,
+}: ResultScreenProps) {
+  const [showAnswers, setShowAnswers] = useState(false);
   const { primarySeason, topSeasons, seasonScores, temperature, lean } = result;
   const isTie = topSeasons.length > 1;
   const displaySeason = primarySeason ?? topSeasons[0];
@@ -217,25 +238,96 @@ export function ResultScreen({ result, gender, onRestart, onEditAnswers }: Resul
           <PaletteRow label="1순위 컬러" season={displaySeason} />
           {secondSeason && <PaletteRow label="2순위 컬러" season={secondSeason} />}
         </div>
+
+        {/* 계절 전체 톤 차트 (저장 이미지에는 넣지 않음) */}
+        <details className="group mt-4 border-t border-border pt-3" data-html2canvas-ignore="true">
+          <summary className="flex cursor-pointer list-none items-center justify-between text-[14px] font-semibold text-tone-deep">
+            {SEASON_META[displaySeason].label} 전체 컬러 차트 보기
+            <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
+          </summary>
+          <img
+            src={assetUrl(SEASON_CHARTS[displaySeason])}
+            alt={`${SEASON_META[displaySeason].label} 컬러 차트`}
+            className="mx-auto mt-3 w-full max-w-[360px]"
+            loading="lazy"
+          />
+        </details>
       </div>
 
-      {/* Recommended ties (남성) */}
-      {gender === 'male' && (
-        <div className="mt-4 rounded-2xl bg-card p-5 shadow-soft">
-          <p className="text-[15px] font-semibold text-ink">추천 넥타이 컬러</p>
-          <p className="mt-1 text-[13px] text-ink-sub">
-            {SEASON_META[displaySeason].label} 타입에게 잘 어울리는 넥타이예요.
+      {/* Fashion & hair colors */}
+      <div className="mt-4 overflow-hidden rounded-2xl bg-card shadow-soft">
+        <img
+          src={assetUrl(SEASON_STYLE[displaySeason].image)}
+          alt={`${SEASON_META[displaySeason].label} 타입 패션 예시`}
+          className="aspect-[4/3] w-full object-cover"
+          draggable={false}
+        />
+        <div className="p-5">
+          <p className="text-[15px] font-semibold text-ink">
+            {SEASON_META[displaySeason].label} 패션 컬러
           </p>
-          <div className="mt-3 grid grid-cols-6 gap-1.5">
-            {RESULT_TIES[displaySeason].map((src) => (
-              <img
-                key={src}
-                src={assetUrl(src)}
-                alt=""
-                className="mx-auto h-28 w-auto object-contain"
-                draggable={false}
-              />
+          <p className="mt-1 text-[13px] text-ink-sub">{SEASON_STYLE[displaySeason].mood}</p>
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {SEASON_STYLE[displaySeason].fashion.map((c) => (
+              <span key={c} className="rounded-full bg-tone-soft/30 px-2.5 py-1 text-[13px] text-ink">
+                {c}
+              </span>
             ))}
+          </div>
+
+          <p className="mt-5 text-[15px] font-semibold text-ink">어울리는 헤어 컬러</p>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {SEASON_STYLE[displaySeason].hair.map((c) => (
+              <span key={c} className="rounded-full border border-border px-2.5 py-1 text-[13px] text-ink-sub">
+                {c}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Male style guide */}
+      {gender === 'male' && (
+        <div className="mt-4 overflow-hidden rounded-2xl bg-card shadow-soft">
+          <div className="flex items-end gap-4 p-5 pb-0">
+            <img
+              src={assetUrl(MALE_STYLE[displaySeason].portrait)}
+              alt={`${SEASON_META[displaySeason].label} 타입 스타일 예시`}
+              className="h-32 w-36 flex-shrink-0 rounded-xl object-cover object-top"
+              draggable={false}
+            />
+            <div className="pb-1">
+              <p className="font-mono text-[12px] tracking-[0.15em] text-tone-deep">STYLE GUIDE</p>
+              <p className="mt-1 text-[17px] font-bold leading-snug text-ink">
+                {SEASON_META[displaySeason].label} 타입 남성 스타일
+              </p>
+              <p className="mt-1 text-[13px] leading-snug text-ink-sub">
+                넥타이와 셔츠 컬러로 인상을 정리해 보세요.
+              </p>
+            </div>
+          </div>
+
+          <div className="p-5">
+            <p className="text-[15px] font-semibold text-ink">추천 넥타이 컬러</p>
+            <div className="mt-3 grid grid-cols-6 gap-1.5">
+              {RESULT_TIES[displaySeason].map((src) => (
+                <img
+                  key={src}
+                  src={assetUrl(src)}
+                  alt=""
+                  className="mx-auto h-28 w-auto object-contain"
+                  draggable={false}
+                />
+              ))}
+            </div>
+
+            <p className="mt-5 text-[15px] font-semibold text-ink">셔츠 & 넥타이 코디</p>
+            <img
+              src={assetUrl(MALE_STYLE[displaySeason].outfit)}
+              alt={`${SEASON_META[displaySeason].label} 셔츠와 넥타이 코디 예시`}
+              className="mt-3 w-full rounded-lg"
+              draggable={false}
+            />
           </div>
         </div>
       )}
@@ -281,12 +373,53 @@ export function ResultScreen({ result, gender, onRestart, onEditAnswers }: Resul
           결과 저장하기
         </button>
         <button
-          onClick={onEditAnswers}
-          className="flex w-full items-center justify-center gap-2 rounded-full border-2 border-border bg-card py-3.5 text-[15px] font-semibold text-ink transition-colors active:scale-[0.98] hover:border-tone"
+          onClick={() => setShowAnswers((v) => !v)}
+          aria-expanded={showAnswers}
+          className={`flex w-full items-center justify-center gap-2 rounded-full border-2 bg-card py-3.5 text-[15px] font-semibold text-ink transition-colors active:scale-[0.98] hover:border-tone ${
+            showAnswers ? 'border-magenta' : 'border-border'
+          }`}
         >
           <Pencil className="h-4 w-4" />
           선택한 답변 수정하기
+          <ChevronDown className={`h-4 w-4 transition-transform ${showAnswers ? 'rotate-180' : ''}`} />
         </button>
+
+        {showAnswers && (
+          <div className="animate-fade-in rounded-2xl bg-card p-4 shadow-soft">
+            <p className="mb-2 text-[13px] text-ink-sub">고치고 싶은 문항을 누르면 바로 이동해요.</p>
+            {(['step1', 'step2'] as const).map((stage) => (
+              <div key={stage} className="mt-2">
+                <p className="mb-1.5 font-mono text-[12px] font-semibold tracking-wide text-magenta">
+                  {stage === 'step1' ? 'STEP 1 · 기본 체크' : 'STEP 2 · 4계절 컬러그룹'}
+                </p>
+                <ul className="divide-y divide-border/70">
+                  {answerItems
+                    .filter((a) => a.stage === stage)
+                    .map((a) => (
+                      <li key={`${a.stage}-${a.index}`}>
+                        <button
+                          onClick={() => onJumpToAnswer(a.stage, a.index)}
+                          className="flex w-full items-center gap-2 py-2.5 text-left transition-colors hover:bg-magenta/5"
+                        >
+                          <span className="min-w-0 flex-1 truncate text-[14px] text-ink">{a.label}</span>
+                          <span className="flex max-w-[45%] items-center gap-1.5 text-[13px] font-semibold text-ink-sub">
+                            {a.color && (
+                              <span
+                                className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
+                                style={{ backgroundColor: a.color }}
+                              />
+                            )}
+                            <span className="truncate">{a.value}</span>
+                          </span>
+                          <ChevronRight className="h-4 w-4 flex-shrink-0 text-ink-sub/60" />
+                        </button>
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        )}
         <button
           onClick={onRestart}
           className="flex w-full items-center justify-center gap-2 rounded-full border-2 border-border bg-card py-3.5 text-[15px] font-semibold text-ink-sub transition-colors active:scale-[0.98] hover:border-tone"

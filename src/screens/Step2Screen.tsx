@@ -1,5 +1,6 @@
 import { Check, ChevronRight } from 'lucide-react';
 import { ProgressHeader } from '@/components/ProgressHeader';
+import { QuestionNav } from '@/components/QuestionNav';
 import { SEASON_META, assetUrl } from '@/data/colorData';
 import type { Season, ColorGroup } from '@/data/colorData';
 
@@ -10,6 +11,8 @@ interface Step2ScreenProps {
   onSelect: (groupId: string, season: Season) => void;
   onBack: () => void;
   onNext: () => void;
+  onJump: (index: number) => void;
+  onFinishEdit?: () => void;
 }
 
 export function Step2Screen({
@@ -19,6 +22,8 @@ export function Step2Screen({
   onSelect,
   onBack,
   onNext,
+  onJump,
+  onFinishEdit,
 }: Step2ScreenProps) {
   const group = groups[currentIndex];
   const selectedSeason = selections[group.id];
@@ -33,6 +38,12 @@ export function Step2Screen({
         total={groups.length}
         onBack={onBack}
         progress={progress}
+      />
+      <QuestionNav
+        answered={groups.map((g) => Boolean(selections[g.id]))}
+        current={currentIndex}
+        onJump={onJump}
+        onFinishEdit={onFinishEdit}
       />
 
       <div className="mb-3">
