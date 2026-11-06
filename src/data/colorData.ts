@@ -65,13 +65,24 @@ export interface MaleStyle {
   keyColors: { name: string; hex: string }[];
   /** 어울리는 헤어 컬러 */
   hair: string[];
+  /** 헤어 견본 사진 */
+  hairImage: string;
 }
 
 const menImg = (season: Season) => ({
   illustration: `style/men/${season}-style.png`,
   palette: `style/men/${season}-palette.png`,
   patterns: [1, 2, 3].map((n) => `style/men/${season}-pattern${n}.png`),
+  hairImage: `style/hair/${season}-hair-men.jpg`,
 });
+
+// 여성 결과 헤어 견본 사진 (퍼스널컬러 강의안_춘천기계공고 헤어 슬라이드)
+export const HAIR_SWATCHES: Record<Season, string> = {
+  spring: 'style/hair/spring-hair.jpg',
+  summer: 'style/hair/summer-hair.jpg',
+  autumn: 'style/hair/autumn-hair.jpg',
+  winter: 'style/hair/winter-hair.jpg',
+};
 
 export const MALE_STYLE: Record<Season, MaleStyle> = {
   spring: {

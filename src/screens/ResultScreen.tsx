@@ -23,6 +23,7 @@ import {
   MALE_STYLE,
   SEASON_CHARTS,
   SEASON_STYLE,
+  HAIR_SWATCHES,
   SEASON_META,
   TIE_MESSAGES,
   assetUrl,
@@ -280,6 +281,12 @@ export function ResultScreen({
               </span>
             ))}
           </div>
+          <img
+            src={assetUrl(HAIR_SWATCHES[displaySeason])}
+            alt={`${SEASON_META[displaySeason].label} 타입 헤어 컬러 견본`}
+            className="mt-3 w-full rounded-lg"
+            draggable={false}
+          />
         </div>
       </div>
       )}
@@ -348,6 +355,12 @@ export function ResultScreen({
                 </span>
               ))}
             </div>
+            <img
+              src={assetUrl(MALE_STYLE[displaySeason].hairImage)}
+              alt={`${SEASON_META[displaySeason].label} 타입 헤어 컬러 견본`}
+              className="mt-3 w-full"
+              draggable={false}
+            />
           </div>
         </div>
       )}
