@@ -58,6 +58,7 @@ export function Step1Screen({
               key={opt.id}
               label={opt.id}
               text={opt.text}
+              chips={opt.chips}
               selected={selected === opt.id}
               onSelect={() => onSelect(question.id, opt.id, opt.temperature, opt.clarity)}
             />
