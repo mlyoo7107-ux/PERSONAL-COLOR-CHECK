@@ -7,18 +7,24 @@ import {
   ThermometerSun,
   Snowflake,
   Droplet,
+  CalendarCheck,
+  ChevronRight,
 } from 'lucide-react';
+
+// COLOR.M 퍼스널컬러 진단 예약 링크 (colorm.net의 "퍼스널컬러 진단 예약하기"와 동일)
+const BOOKING_URL = 'https://naver.me/FXwWe5MG';
 import {
   RESULT_PALETTES,
   RESULT_DESCRIPTIONS,
   RESULT_TITLES,
+  RESULT_KEYWORDS,
   SEASON_META,
   TIE_MESSAGES,
 } from '@/data/colorData';
 import type { Season } from '@/data/colorData';
 import { GENDER_LABELS, type Gender } from '@/data/questions';
 import type { DiagnosisResult } from '@/utils/scoring';
-import { tieKeyFor } from '@/utils/scoring';
+import { tieKeyFor, NEUTRAL_LEAN_TEXT } from '@/utils/scoring';
 
 interface ResultScreenProps {
   result: DiagnosisResult;
@@ -28,7 +34,7 @@ interface ResultScreenProps {
 }
 
 export function ResultScreen({ result, gender, onRestart, onEditAnswers }: ResultScreenProps) {
-  const { primarySeason, topSeasons, seasonScores, temperature } = result;
+  const { primarySeason, topSeasons, seasonScores, temperature, lean } = result;
   const isTie = topSeasons.length > 1;
   const displaySeason = primarySeason ?? topSeasons[0];
   const meta = SEASON_META[displaySeason];
@@ -119,6 +125,18 @@ export function ResultScreen({ result, gender, onRestart, onEditAnswers }: Resul
               {secondSeason && <p>2순위 계절 · {SEASON_META[secondSeason].label}</p>}
             </div>
           )}
+          <div className="mt-4 flex flex-wrap gap-2">
+            {(isTie ? topSeasons.flatMap((s) => RESULT_KEYWORDS[s].slice(0, 2)) : RESULT_KEYWORDS[displaySeason]).map(
+              (kw) => (
+                <span
+                  key={kw}
+                  className="rounded-full bg-black/20 px-3 py-1 text-[14px] font-semibold text-white"
+                >
+                  {kw}
+                </span>
+              ),
+            )}
+          </div>
         </div>
       </div>
 
@@ -129,14 +147,24 @@ export function ResultScreen({ result, gender, onRestart, onEditAnswers }: Resul
             {tempIcon}
           </div>
           <div>
-            <p className="text-[13px] text-ink-sub">웜톤 · 쿨톤 예상</p>
+            <p className="text-[13px] text-ink-sub">웜톤 · 뉴트럴 · 쿨톤 예상</p>
             <p className="text-[17px] font-semibold text-ink">
               {temperature === 'warm'
                 ? '웜톤 예상'
                 : temperature === 'cool'
                 ? '쿨톤 예상'
                 : '뉴트럴 예상'}
+              {temperature === 'neutral' && lean && (
+                <span className="ml-1.5 text-[14px] font-medium text-tone-deep">
+                  ({NEUTRAL_LEAN_TEXT[lean]})
+                </span>
+              )}
             </p>
+            {temperature === 'neutral' && (
+              <p className="mt-0.5 text-[14px] leading-relaxed text-ink-sub">
+                웜·쿨 어느 한쪽으로 치우치지 않아 중간 톤의 색을 폭넓게 소화할 수 있어요.
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -200,6 +228,26 @@ export function ResultScreen({ result, gender, onRestart, onEditAnswers }: Resul
           보다 정확한 진단은 전문가 컨설팅을 통해 확인해보시길 권해드립니다.
         </p>
       </div>
+
+      {/* Expert booking (저장 이미지에는 포함하지 않음) */}
+      <a
+        href={BOOKING_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-html2canvas-ignore="true"
+        className="mt-4 flex items-center gap-3 rounded-2xl border-2 border-magenta/30 bg-magenta/5 p-4 transition-colors hover:border-magenta active:scale-[0.99]"
+      >
+        <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-magenta text-white">
+          <CalendarCheck className="h-5 w-5" />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[16px] font-bold text-ink">전문가 퍼스널컬러 진단 예약하기</span>
+          <span className="mt-0.5 block text-[14px] leading-snug text-ink-sub">
+            실제 드레이핑으로 나의 컬러를 정확하게 확인해 보세요.
+          </span>
+        </span>
+        <ChevronRight className="h-5 w-5 flex-shrink-0 text-magenta" />
+      </a>
 
       {/* Action buttons */}
       <div className="mt-6 space-y-3" data-html2canvas-ignore="true">

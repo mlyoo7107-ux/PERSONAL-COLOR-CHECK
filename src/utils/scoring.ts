@@ -3,6 +3,7 @@ import { SEASON_META } from '@/data/colorData';
 
 export interface Scores {
   warm: number;
+  neutral: number;
   cool: number;
   clear: number;
   soft: number;
@@ -14,6 +15,7 @@ export interface Scores {
 
 export const createEmptyScores = (): Scores => ({
   warm: 0,
+  neutral: 0,
   cool: 0,
   clear: 0,
   soft: 0,
@@ -30,12 +32,14 @@ export interface DiagnosisResult {
   topSeasons: Season[];
   /** Predicted temperature from Step 1 */
   temperature: Temperature | 'neutral';
+  /** 뉴트럴일 때 웜·쿨 중 조금 더 가까운 쪽 (없으면 null) */
+  lean: Temperature | null;
   /** Step 1 clarity preference (clear / soft / equal) */
   clarity: Clarity | 'equal';
   /** Season scores for display */
   seasonScores: Pick<Scores, 'spring' | 'summer' | 'autumn' | 'winter'>;
   /** All four Step-1 scores for the save card */
-  step1: Pick<Scores, 'warm' | 'cool' | 'clear' | 'soft'>;
+  step1: Pick<Scores, 'warm' | 'neutral' | 'cool' | 'clear' | 'soft'>;
 }
 
 const tieKey = (a: Season, b: Season): string => {
@@ -54,22 +58,56 @@ const tieKey = (a: Season, b: Season): string => {
   return found ? `${found[0]}|${found[1]}` : `${a}|${b}`;
 };
 
-export const computeStep1Result = (scores: Scores): { temperature: Temperature | 'neutral'; message: string } => {
-  if (scores.warm > scores.cool) {
+/**
+ * 웜·뉴트럴·쿨 판정
+ * - 뉴트럴 점수가 웜·쿨 점수 이상이면 뉴트럴
+ * - 웜과 쿨 점수가 같아도 뉴트럴
+ * - 그 밖에는 웜·쿨 중 점수가 높은 쪽
+ * 뉴트럴일 때는 웜·쿨 중 조금 더 가까운 쪽(lean)도 함께 알려 줌
+ */
+export const decideTone = (
+  scores: Scores,
+): { temperature: Temperature | 'neutral'; lean: Temperature | null } => {
+  const lean: Temperature | null =
+    scores.warm > scores.cool ? 'warm' : scores.cool > scores.warm ? 'cool' : null;
+  const neutralWins = scores.neutral > 0 && scores.neutral >= Math.max(scores.warm, scores.cool);
+  if (neutralWins || lean === null) return { temperature: 'neutral', lean };
+  return { temperature: lean, lean: null };
+};
+
+export const NEUTRAL_LEAN_TEXT: Record<Temperature, string> = {
+  warm: '웜 쪽에 조금 더 가까움',
+  cool: '쿨 쪽에 조금 더 가까움',
+};
+
+export const computeStep1Result = (
+  scores: Scores,
+): { temperature: Temperature | 'neutral'; lean: Temperature | null; message: string } => {
+  const { temperature, lean } = decideTone(scores);
+  if (temperature === 'warm') {
     return {
-      temperature: 'warm',
+      temperature,
+      lean,
       message: '따뜻한 색이 비교적 자연스럽게 어울리는 웜톤 가능성이 있습니다.',
     };
   }
-  if (scores.cool > scores.warm) {
+  if (temperature === 'cool') {
     return {
-      temperature: 'cool',
+      temperature,
+      lean,
       message: '차가운 색이 비교적 자연스럽게 어울리는 쿨톤 가능성이 있습니다.',
     };
   }
+  const leanMsg =
+    lean === 'warm'
+      ? ' 그중에서도 따뜻한 쪽에 조금 더 가깝습니다.'
+      : lean === 'cool'
+      ? ' 그중에서도 차가운 쪽에 조금 더 가깝습니다.'
+      : '';
   return {
-    temperature: 'neutral',
-    message: '웜톤과 쿨톤의 특성이 함께 나타나는 뉴트럴 가능성이 있습니다.',
+    temperature,
+    lean,
+    message: `웜톤과 쿨톤 어느 한쪽으로 치우치지 않아 중간 톤의 색을 폭넓게 소화하는 뉴트럴 가능성이 있습니다.${leanMsg}`,
   };
 };
 
@@ -89,15 +127,16 @@ export const computeDiagnosis = (scores: Scores): DiagnosisResult => {
 
   let primarySeason: Season | null = topSeasons[0];
 
-  const temperature: Temperature | 'neutral' =
-    scores.warm > scores.cool ? 'warm' : scores.cool > scores.warm ? 'cool' : 'neutral';
+  const { temperature, lean } = decideTone(scores);
   const clarity: Clarity | 'equal' =
     scores.clear > scores.soft ? 'clear' : scores.soft > scores.clear ? 'soft' : 'equal';
 
   if (topSeasons.length > 1) {
     // 1st tiebreaker: temperature preference
+    // 뉴트럴이면 웜·쿨 중 조금 더 가까운 쪽(lean)을 기준으로 사용
+    const tieTemp = temperature === 'neutral' ? lean : temperature;
     const tempPreferred = topSeasons.filter(
-      (s) => SEASON_META[s].temp === temperature,
+      (s) => tieTemp !== null && SEASON_META[s].temp === tieTemp,
     );
     if (tempPreferred.length === 1) {
       primarySeason = tempPreferred[0];
@@ -136,9 +175,16 @@ export const computeDiagnosis = (scores: Scores): DiagnosisResult => {
     primarySeason,
     topSeasons,
     temperature,
+    lean,
     clarity,
     seasonScores,
-    step1: { warm: scores.warm, cool: scores.cool, clear: scores.clear, soft: scores.soft },
+    step1: {
+      warm: scores.warm,
+      neutral: scores.neutral,
+      cool: scores.cool,
+      clear: scores.clear,
+      soft: scores.soft,
+    },
   };
 };
 

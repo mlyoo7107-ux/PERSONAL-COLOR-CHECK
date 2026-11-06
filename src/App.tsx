@@ -5,9 +5,9 @@ import { Step1ResultScreen } from '@/screens/Step1ResultScreen';
 import { Step2Screen } from '@/screens/Step2Screen';
 import { ResultScreen } from '@/screens/ResultScreen';
 import { Footer } from '@/components/Footer';
-import { STEP1_QUESTIONS, type Gender } from '@/data/questions';
+import { STEP1_QUESTIONS, type Gender, type OptionId, type Tone } from '@/data/questions';
 import { COLOR_GROUPS } from '@/data/colorData';
-import type { Season, Temperature, Clarity } from '@/data/colorData';
+import type { Season, Clarity } from '@/data/colorData';
 import {
   createEmptyScores,
   computeDiagnosis,
@@ -22,7 +22,7 @@ function App() {
   const [gender, setGender] = useState<Gender>('female');
   const [step1Index, setStep1Index] = useState(0);
   const [step2Index, setStep2Index] = useState(0);
-  const [answers, setAnswers] = useState<Record<number, 'A' | 'B'>>({});
+  const [answers, setAnswers] = useState<Record<number, OptionId>>({});
   const [selections, setSelections] = useState<Record<string, Season | undefined>>({});
   const [scores, setScores] = useState<Scores>(createEmptyScores());
   const [result, setResult] = useState<DiagnosisResult | null>(null);
@@ -44,8 +44,8 @@ function App() {
 
   const handleStep1Select = (
     questionId: number,
-    optionId: 'A' | 'B',
-    temperature?: Temperature,
+    optionId: OptionId,
+    temperature?: Tone,
     clarity?: Clarity,
   ) => {
     const prev = answers[questionId];

@@ -1,5 +1,5 @@
 import { ChevronRight, Sparkles, Sun, Snowflake, Thermometer } from 'lucide-react';
-import { computeStep1Result } from '@/utils/scoring';
+import { computeStep1Result, NEUTRAL_LEAN_TEXT } from '@/utils/scoring';
 import type { Scores } from '@/utils/scoring';
 
 interface Step1ResultScreenProps {
@@ -9,7 +9,9 @@ interface Step1ResultScreenProps {
 }
 
 export function Step1ResultScreen({ scores, onContinue, onBack }: Step1ResultScreenProps) {
-  const { temperature, message } = computeStep1Result(scores);
+  const { temperature, lean, message } = computeStep1Result(scores);
+  // 웜·뉴트럴·쿨 점수 막대의 최대값 = 톤을 묻는 문항 수
+  const toneMax = Math.max(scores.warm + scores.neutral + scores.cool, 1);
 
   const icon =
     temperature === 'warm' ? (
@@ -40,14 +42,18 @@ export function Step1ResultScreen({ scores, onContinue, onBack }: Step1ResultScr
           <div>
             <p className="text-[13px] text-ink-sub">예상 톤</p>
             <p className="font-display text-[22px] font-black text-ink">{label}</p>
+            {temperature === 'neutral' && lean && (
+              <p className="text-[14px] font-medium text-tone-deep">{NEUTRAL_LEAN_TEXT[lean]}</p>
+            )}
           </div>
         </div>
 
         <p className="text-[17px] leading-relaxed text-ink">{message}</p>
 
         <div className="mt-6 space-y-3">
-          <ScoreRow label="웜톤 점수" value={scores.warm} color="#D3A04A" max={5} />
-          <ScoreRow label="쿨톤 점수" value={scores.cool} color="#315F9D" max={5} />
+          <ScoreRow label="웜톤 점수" value={scores.warm} color="#D3A04A" max={toneMax} />
+          <ScoreRow label="뉴트럴 점수" value={scores.neutral} color="#B39A86" max={toneMax} />
+          <ScoreRow label="쿨톤 점수" value={scores.cool} color="#315F9D" max={toneMax} />
         </div>
       </div>
 

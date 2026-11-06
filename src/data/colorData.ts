@@ -126,6 +126,14 @@ export const RESULT_TITLES: Record<Season, string> = {
   winter: '겨울 쿨톤',
 };
 
+// 결과 카드에 표시할 계절별 키워드 (공유 이미지용)
+export const RESULT_KEYWORDS: Record<Season, string[]> = {
+  spring: ['#밝은', '#화사한', '#생기있는'],
+  summer: ['#부드러운', '#우아한', '#청량한'],
+  autumn: ['#깊이있는', '#차분한', '#내추럴한'],
+  winter: ['#선명한', '#또렷한', '#세련된'],
+};
+
 export const TIE_MESSAGES: Record<string, string> = {
   'spring|autumn':
     '따뜻한 색이 잘 어울리는 웜톤 특성이 나타나며, 밝고 화사한 컬러와 차분하고 깊은 컬러를 함께 비교해볼 필요가 있습니다.',

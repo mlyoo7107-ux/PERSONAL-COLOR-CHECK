@@ -1,5 +1,13 @@
-import { Clock, ChevronRight } from 'lucide-react';
+import { Clock, ChevronRight, Sun, Smile, Shirt, Smartphone } from 'lucide-react';
 import type { Gender } from '@/data/questions';
+
+// 정확한 셀프 체크를 위한 준비 안내
+const PREP_TIPS = [
+  { icon: Sun, text: '자연광이 드는 창가에서 거울을 보며 답해요.' },
+  { icon: Smile, text: '맨얼굴이나 가벼운 메이크업 상태가 좋아요.' },
+  { icon: Shirt, text: '흰색이나 무채색 옷을 입으면 비교가 쉬워요.' },
+  { icon: Smartphone, text: '화면 밝기는 중간 이상, 야간 모드·블루라이트 필터는 꺼 주세요.' },
+];
 
 interface IntroScreenProps {
   onStart: (gender: Gender) => void;
@@ -35,6 +43,21 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
           <Clock className="h-4 w-4 text-tone" />
           <span className="text-[15px]">약 3분 소요</span>
         </div>
+      </div>
+
+      {/* Prep tips */}
+      <div className="mt-5 rounded-2xl bg-card p-5 shadow-soft">
+        <p className="text-[16px] font-semibold text-ink">정확한 체크를 위한 준비</p>
+        <ul className="mt-3 space-y-2.5">
+          {PREP_TIPS.map(({ icon: Icon, text }) => (
+            <li key={text} className="flex items-start gap-2.5">
+              <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-tone-soft/30">
+                <Icon className="h-3.5 w-3.5 text-tone-deep" />
+              </span>
+              <span className="text-[15px] leading-relaxed text-ink-sub">{text}</span>
+            </li>
+          ))}
+        </ul>
       </div>
 
       {/* Notice */}
