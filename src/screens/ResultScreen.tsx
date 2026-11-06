@@ -246,7 +246,9 @@ export function ResultScreen({
             <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
           </summary>
           <img
-            src={assetUrl(SEASON_CHARTS[displaySeason])}
+            src={assetUrl(
+              gender === 'male' ? MALE_STYLE[displaySeason].palette : SEASON_CHARTS[displaySeason],
+            )}
             alt={`${SEASON_META[displaySeason].label} 컬러 차트`}
             className="mx-auto mt-3 w-full max-w-[360px]"
             loading="lazy"
@@ -254,14 +256,9 @@ export function ResultScreen({
         </details>
       </div>
 
-      {/* Fashion & hair colors */}
+      {/* Fashion & hair colors (여성) */}
+      {gender === 'female' && (
       <div className="mt-4 overflow-hidden rounded-2xl bg-card shadow-soft">
-        <img
-          src={assetUrl(SEASON_STYLE[displaySeason].image)}
-          alt={`${SEASON_META[displaySeason].label} 타입 패션 예시`}
-          className="aspect-[4/3] w-full object-cover"
-          draggable={false}
-        />
         <div className="p-5">
           <p className="text-[15px] font-semibold text-ink">
             {SEASON_META[displaySeason].label} 패션 컬러
@@ -285,30 +282,52 @@ export function ResultScreen({
           </div>
         </div>
       </div>
+      )}
 
-      {/* Male style guide */}
+      {/* Male style guide (COLOR.M 남성 패션 카드) */}
       {gender === 'male' && (
         <div className="mt-4 overflow-hidden rounded-2xl bg-card shadow-soft">
-          <div className="flex items-end gap-4 p-5 pb-0">
-            <img
-              src={assetUrl(MALE_STYLE[displaySeason].portrait)}
-              alt={`${SEASON_META[displaySeason].label} 타입 스타일 예시`}
-              className="h-32 w-36 flex-shrink-0 rounded-xl object-cover object-top"
-              draggable={false}
-            />
-            <div className="pb-1">
-              <p className="font-mono text-[12px] tracking-[0.15em] text-tone-deep">STYLE GUIDE</p>
-              <p className="mt-1 text-[17px] font-bold leading-snug text-ink">
-                {SEASON_META[displaySeason].label} 타입 남성 스타일
-              </p>
-              <p className="mt-1 text-[13px] leading-snug text-ink-sub">
-                넥타이와 셔츠 컬러로 인상을 정리해 보세요.
-              </p>
-            </div>
+          <div className="px-5 pt-5">
+            <p className="font-mono text-[12px] tracking-[0.15em] text-tone-deep">MAN'S FASHION STYLE</p>
+            <p className="mt-1 text-[17px] font-bold leading-snug text-ink">
+              {SEASON_META[displaySeason].label} 타입 남성 스타일
+            </p>
           </div>
+          <img
+            src={assetUrl(MALE_STYLE[displaySeason].illustration)}
+            alt={`${SEASON_META[displaySeason].label} 타입 남성 스타일 일러스트`}
+            className="mx-auto mt-3 w-full max-w-[340px]"
+            draggable={false}
+          />
 
           <div className="p-5">
-            <p className="text-[15px] font-semibold text-ink">추천 넥타이 컬러</p>
+            <p className="text-[15px] font-semibold text-ink">대표 컬러</p>
+            <div className="mt-3 grid grid-cols-4 gap-x-2 gap-y-3">
+              {MALE_STYLE[displaySeason].keyColors.map((c) => (
+                <div key={c.name} className="flex flex-col items-center">
+                  <span
+                    className="block h-12 w-full rounded-lg ring-1 ring-inset ring-black/10"
+                    style={{ backgroundColor: c.hex }}
+                  />
+                  <span className="mt-1 text-center text-[12px] leading-tight text-ink-sub">{c.name}</span>
+                </div>
+              ))}
+            </div>
+
+            <p className="mt-5 text-[15px] font-semibold text-ink">추천 패턴</p>
+            <div className="mt-3 flex gap-4">
+              {MALE_STYLE[displaySeason].patterns.map((src) => (
+                <img
+                  key={src}
+                  src={assetUrl(src)}
+                  alt=""
+                  className="h-16 w-16 rounded-full object-cover ring-1 ring-black/10"
+                  draggable={false}
+                />
+              ))}
+            </div>
+
+            <p className="mt-5 text-[15px] font-semibold text-ink">추천 넥타이 컬러</p>
             <div className="mt-3 grid grid-cols-6 gap-1.5">
               {RESULT_TIES[displaySeason].map((src) => (
                 <img
@@ -321,13 +340,14 @@ export function ResultScreen({
               ))}
             </div>
 
-            <p className="mt-5 text-[15px] font-semibold text-ink">셔츠 & 넥타이 코디</p>
-            <img
-              src={assetUrl(MALE_STYLE[displaySeason].outfit)}
-              alt={`${SEASON_META[displaySeason].label} 셔츠와 넥타이 코디 예시`}
-              className="mt-3 w-full rounded-lg"
-              draggable={false}
-            />
+            <p className="mt-5 text-[15px] font-semibold text-ink">어울리는 헤어 컬러</p>
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {MALE_STYLE[displaySeason].hair.map((c) => (
+                <span key={c} className="rounded-full border border-border px-2.5 py-1 text-[13px] text-ink-sub">
+                  {c}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       )}

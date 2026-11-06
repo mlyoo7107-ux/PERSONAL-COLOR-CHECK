@@ -53,40 +53,106 @@ export const RESULT_TIES: Record<Season, string[]> = {
   winter: ['s1', 's5', 's8', 's9', 'p4', 'p10'].map((t) => `ties/winter-${t}.png`),
 };
 
-// ── COLOR.M 자료에서 가져온 스타일 이미지 (public/style) ──
-// 남성 결과 스타일 가이드: 계절 캐릭터(남성패션_넥타이.ai) + 셔츠·넥타이 코디(man 사계절 정장.ai)
-export const MALE_STYLE: Record<Season, { portrait: string; outfit: string }> = {
-  spring: { portrait: 'style/spring-man.jpg', outfit: 'style/spring-outfit.png' },
-  summer: { portrait: 'style/summer-man.jpg', outfit: 'style/summer-outfit.png' },
-  autumn: { portrait: 'style/autumn-man.jpg', outfit: 'style/autumn-outfit.png' },
-  winter: { portrait: 'style/winter-man.jpg', outfit: 'style/winter-outfit.png' },
+// ── 남성 결과 스타일 가이드 (COLOR.M 남성패션_명함4.ai, public/style/men) ──
+export interface MaleStyle {
+  /** 계절 스타일 일러스트 */
+  illustration: string;
+  /** Basic·Fashion 컬러 팔레트 카드 */
+  palette: string;
+  /** 추천 패턴 3종 */
+  patterns: string[];
+  /** 이름이 붙은 대표 컬러 8개 */
+  keyColors: { name: string; hex: string }[];
+  /** 어울리는 헤어 컬러 */
+  hair: string[];
+}
+
+const menImg = (season: Season) => ({
+  illustration: `style/men/${season}-style.png`,
+  palette: `style/men/${season}-palette.png`,
+  patterns: [1, 2, 3].map((n) => `style/men/${season}-pattern${n}.png`),
+});
+
+export const MALE_STYLE: Record<Season, MaleStyle> = {
+  spring: {
+    ...menImg('spring'),
+    keyColors: [
+      { name: '옐로우', hex: '#F5DE39' },
+      { name: '애플 그린', hex: '#7EBB85' },
+      { name: '캐멀', hex: '#D3A760' },
+      { name: '브라이트 아쿠아', hex: '#459E94' },
+      { name: '코럴 핑크', hex: '#E8A17D' },
+      { name: '웜 그레이', hex: '#CECDBB' },
+      { name: '오렌지 레드', hex: '#CC593A' },
+      { name: '브라이트 네이비', hex: '#23596F' },
+    ],
+    hair: ['옐로 브라운', '골든 브라운', '코럴 브라운', '오렌지 브라운'],
+  },
+  summer: {
+    ...menImg('summer'),
+    keyColors: [
+      { name: '화이트', hex: '#EDEBEA' },
+      { name: '파스텔 그린', hex: '#AED5C5' },
+      { name: '핑크', hex: '#EBB2D0' },
+      { name: '퍼플 그레이', hex: '#8F98AD' },
+      { name: '로즈 레드', hex: '#CA6D86' },
+      { name: '미스트 블루', hex: '#5E788C' },
+      { name: '로즈 브라운', hex: '#9F7A7F' },
+      { name: '브라이트 네이비', hex: '#474E65' },
+    ],
+    hair: ['레드 브라운', '그레이 브라운', '다크 브라운', '와인 블랙'],
+  },
+  autumn: {
+    ...menImg('autumn'),
+    keyColors: [
+      { name: '모스 베이지', hex: '#E6E3CF' },
+      { name: '모스 그린', hex: '#708757' },
+      { name: '새먼', hex: '#E8A289' },
+      { name: '올리브 그린', hex: '#4B6148' },
+      { name: '시나몬', hex: '#986740' },
+      { name: '다크 브라운', hex: '#70594B' },
+      { name: '레드 브라운', hex: '#9A4945' },
+      { name: '딥 틸', hex: '#226177' },
+    ],
+    hair: ['레드 브라운', '골든 브라운', '오렌지 브라운', '애시 브라운'],
+  },
+  winter: {
+    ...menImg('winter'),
+    keyColors: [
+      { name: '스노우 화이트', hex: '#FFFFFF' },
+      { name: '차콜 그레이', hex: '#686A69' },
+      { name: '아이스 블루', hex: '#C3D1E1' },
+      { name: '파인 그린', hex: '#236763' },
+      { name: '애시 로즈', hex: '#A43073' },
+      { name: '로열 블루', hex: '#383668' },
+      { name: '와인 레드', hex: '#6A324A' },
+      { name: '블랙', hex: '#2D2D2D' },
+    ],
+    hair: ['레드 브라운', '네이비 브라운', '와인 블랙', '블루 블랙'],
+  },
 };
 
-// 계절별 패션·헤어 컬러 (퍼스널컬러 강의안_춘천기계공고 자료)
+// 계절별 패션·헤어 컬러 (퍼스널컬러 강의안_춘천기계공고 자료) — 여성 결과에 사용
 export const SEASON_STYLE: Record<
   Season,
-  { image: string; mood: string; fashion: string[]; hair: string[] }
+  { mood: string; fashion: string[]; hair: string[] }
 > = {
   spring: {
-    image: 'style/spring-fashion.jpg',
     mood: '밝고 따뜻하며 생기 있는 색상 (Light & Warm)',
     fashion: ['아이보리', '밝은 베이지', '코랄 핑크', '살몬 핑크', '소프트 옐로우', '라이트 네이비', '민트 그린(포인트)'],
     hair: ['밀크 브라운', '허니 브라운', '골드 브라운', '옐로우 브라운', '오렌지 브라운'],
   },
   summer: {
-    image: 'style/summer-fashion.jpg',
     mood: '차갑고 부드러운 파스텔 톤 (Cool & Soft)',
     fashion: ['화이트', '라이트 그레이', '실버 블루', '연보라', '말린 장미색', '쿨 핑크', '네이비'],
     hair: ['애쉬 브라운', '쿨 브라운', '코코아 브라운', '매트 브라운', '로즈 브라운'],
   },
   autumn: {
-    image: 'style/autumn-fashion.jpg',
     mood: '따뜻하고 깊이 있으며 차분한 색상 (Deep & Muted)',
     fashion: ['베이지', '카멜', '모카 베이지', '올리브 그린', '브라운', '딥 네이비', '웜 네이비'],
     hair: ['레드 브라운', '골든 브라운', '오렌지 브라운', '카키 브라운', '딥 초코 브라운'],
   },
   winter: {
-    image: 'style/winter-fashion.jpg',
     mood: '선명하고 차가운 고채도 색상과 무채색 (Clear & Cool)',
     fashion: ['블랙', '퓨어 화이트', '로열 블루', '딥 네이비', '트루 레드', '버건디(포인트)'],
     hair: ['딥 블랙 브라운', '다크 브라운', '쿨 초코 브라운', '블루 블랙', '애쉬 블랙'],
