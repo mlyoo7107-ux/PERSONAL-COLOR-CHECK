@@ -10,14 +10,48 @@ export interface ColorChip {
 export interface SeasonPalette {
   season: Season;
   colors: [string, string];
+  /** 색 대신 보여 줄 이미지 (public 폴더 기준 경로, 예: ties/spring-s8.png) */
+  images?: string[];
   description: string;
 }
 
 export interface ColorGroup {
-  id: 'red' | 'yellow' | 'green' | 'blue' | 'basic';
+  id: 'red' | 'yellow' | 'green' | 'blue' | 'basic' | 'tie';
   name: string;
+  /** 화면 제목 (없으면 "{name} 컬러") */
+  title?: string;
+  /** 화면 안내 문구 (없으면 기본 문구) */
+  guide?: string;
   palettes: SeasonPalette[];
 }
+
+/** public 폴더의 이미지 경로를 배포 경로에 맞게 변환 */
+export const assetUrl = (path: string): string => `${import.meta.env.BASE_URL}${path}`;
+
+// ── 남성 넥타이 (COLOR.M 사계절 넥타이 원본에서 잘라 public/ties 에 저장) ──
+// 파일 이름: {계절}-s{번호}.png = 단색, {계절}-p{번호}.png = 무늬
+
+// STEP 2 남성 전용 비교 문항: 같은 계열(블루·레드)을 계절 톤만 다르게 비교
+export const TIE_GROUP: ColorGroup = {
+  id: 'tie',
+  name: 'NECKTIE',
+  title: '넥타이 컬러',
+  guide: '같은 계열의 넥타이를 얼굴 아래에 맸다고 생각했을 때, 얼굴이 가장 자연스러워 보이는 쪽을 선택하세요.',
+  palettes: [
+    { season: 'spring', colors: ['#8FD3E6', '#D45F4F'], images: ['ties/spring-s8.png', 'ties/spring-s3.png'], description: '맑은 아쿠아 블루와 코랄 레드' },
+    { season: 'autumn', colors: ['#127FA0', '#8B1A12'], images: ['ties/autumn-s7.png', 'ties/autumn-s4.png'], description: '깊은 틸 블루와 딥 레드' },
+    { season: 'summer', colors: ['#B3DCF5', '#E83E78'], images: ['ties/summer-s2.png', 'ties/summer-s5.png'], description: '파우더 블루와 라즈베리' },
+    { season: 'winter', colors: ['#2B4A9E', '#5A0F2B'], images: ['ties/winter-s5.png', 'ties/winter-s9.png'], description: '로열 블루와 버건디' },
+  ],
+};
+
+// 남성 결과 화면의 계절별 추천 넥타이 (단색 4 + 무늬 2)
+export const RESULT_TIES: Record<Season, string[]> = {
+  spring: ['s3', 's4', 's6', 's8', 'p1', 'p3'].map((t) => `ties/spring-${t}.png`),
+  summer: ['s2', 's4', 's8', 's10', 'p4', 'p9'].map((t) => `ties/summer-${t}.png`),
+  autumn: ['s1', 's3', 's7', 's10', 'p4', 'p9'].map((t) => `ties/autumn-${t}.png`),
+  winter: ['s1', 's5', 's8', 's9', 'p4', 'p10'].map((t) => `ties/winter-${t}.png`),
+};
 
 export const SEASON_META: Record<Season, { label: string; color: string; temp: Temperature }> = {
   spring: { label: '봄', color: '#F4D94E', temp: 'warm' },

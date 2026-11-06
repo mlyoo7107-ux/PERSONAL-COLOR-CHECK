@@ -6,7 +6,7 @@ import { Step2Screen } from '@/screens/Step2Screen';
 import { ResultScreen } from '@/screens/ResultScreen';
 import { Footer } from '@/components/Footer';
 import { STEP1_QUESTIONS, type Gender, type OptionId, type Tone } from '@/data/questions';
-import { COLOR_GROUPS } from '@/data/colorData';
+import { COLOR_GROUPS, TIE_GROUP } from '@/data/colorData';
 import type { Season, Clarity } from '@/data/colorData';
 import {
   createEmptyScores,
@@ -28,6 +28,8 @@ function App() {
   const [result, setResult] = useState<DiagnosisResult | null>(null);
 
   const questions = STEP1_QUESTIONS[gender];
+  // 남성은 STEP 2 마지막에 넥타이 비교 문항을 추가
+  const step2Groups = gender === 'male' ? [...COLOR_GROUPS, TIE_GROUP] : COLOR_GROUPS;
 
   const startDiagnosis = (selected: Gender) => {
     // 다른 성별로 시작하면 이전 응답이 섞이지 않도록 초기화
@@ -98,7 +100,7 @@ function App() {
   };
 
   const handleStep2Next = () => {
-    if (step2Index < COLOR_GROUPS.length - 1) {
+    if (step2Index < step2Groups.length - 1) {
       setStep2Index(step2Index + 1);
     } else {
       setResult(computeDiagnosis(scores));
@@ -159,6 +161,7 @@ function App() {
 
         {screen === 'step2' && (
           <Step2Screen
+            groups={step2Groups}
             currentIndex={step2Index}
             selections={selections}
             onSelect={handleStep2Select}

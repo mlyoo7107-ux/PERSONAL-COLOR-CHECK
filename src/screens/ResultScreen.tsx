@@ -18,8 +18,10 @@ import {
   RESULT_DESCRIPTIONS,
   RESULT_TITLES,
   RESULT_KEYWORDS,
+  RESULT_TIES,
   SEASON_META,
   TIE_MESSAGES,
+  assetUrl,
 } from '@/data/colorData';
 import type { Season } from '@/data/colorData';
 import { GENDER_LABELS, type Gender } from '@/data/questions';
@@ -216,6 +218,27 @@ export function ResultScreen({ result, gender, onRestart, onEditAnswers }: Resul
           {secondSeason && <PaletteRow label="2순위 컬러" season={secondSeason} />}
         </div>
       </div>
+
+      {/* Recommended ties (남성) */}
+      {gender === 'male' && (
+        <div className="mt-4 rounded-2xl bg-card p-5 shadow-soft">
+          <p className="text-[15px] font-semibold text-ink">추천 넥타이 컬러</p>
+          <p className="mt-1 text-[13px] text-ink-sub">
+            {SEASON_META[displaySeason].label} 타입에게 잘 어울리는 넥타이예요.
+          </p>
+          <div className="mt-3 grid grid-cols-6 gap-1.5">
+            {RESULT_TIES[displaySeason].map((src) => (
+              <img
+                key={src}
+                src={assetUrl(src)}
+                alt=""
+                className="mx-auto h-28 w-auto object-contain"
+                draggable={false}
+              />
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Notice */}
       <div className="mt-4 rounded-2xl border border-border bg-tone-soft/12 p-4">

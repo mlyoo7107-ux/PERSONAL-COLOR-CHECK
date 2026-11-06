@@ -1,9 +1,10 @@
 import { Check, ChevronRight } from 'lucide-react';
 import { ProgressHeader } from '@/components/ProgressHeader';
-import { COLOR_GROUPS, SEASON_META } from '@/data/colorData';
-import type { Season } from '@/data/colorData';
+import { SEASON_META, assetUrl } from '@/data/colorData';
+import type { Season, ColorGroup } from '@/data/colorData';
 
 interface Step2ScreenProps {
+  groups: ColorGroup[];
   currentIndex: number;
   selections: Record<string, Season | undefined>;
   onSelect: (groupId: string, season: Season) => void;
@@ -12,15 +13,16 @@ interface Step2ScreenProps {
 }
 
 export function Step2Screen({
+  groups,
   currentIndex,
   selections,
   onSelect,
   onBack,
   onNext,
 }: Step2ScreenProps) {
-  const group = COLOR_GROUPS[currentIndex];
+  const group = groups[currentIndex];
   const selectedSeason = selections[group.id];
-  const progress = ((currentIndex + 1) / COLOR_GROUPS.length) * 100;
+  const progress = ((currentIndex + 1) / groups.length) * 100;
 
   return (
     <div className="animate-slide-in">
@@ -28,16 +30,19 @@ export function Step2Screen({
         stepLabel="STEP 2"
         stepTitle="4계절 컬러그룹 셀프 진단"
         current={currentIndex + 1}
-        total={COLOR_GROUPS.length}
+        total={groups.length}
         onBack={onBack}
         progress={progress}
       />
 
       <div className="mb-3">
         <p className="text-[13px] font-medium text-tone-deep">4계절 컬러그룹 알아보기</p>
-        <h2 className="mt-1 font-display text-[22px] font-black text-ink">{group.name} 컬러</h2>
+        <h2 className="mt-1 font-display text-[22px] font-black text-ink">
+          {group.title ?? `${group.name} 컬러`}
+        </h2>
         <p className="mt-2 text-[15px] leading-relaxed text-ink-sub">
-          각 컬러 그룹에서 얼굴 가까이에 대었을 때 비교적 잘 어울릴 것 같은 색을 선택하세요.
+          {group.guide ??
+            '각 컬러 그룹에서 얼굴 가까이에 대었을 때 비교적 잘 어울릴 것 같은 색을 선택하세요.'}
         </p>
       </div>
 
@@ -74,15 +79,29 @@ export function Step2Screen({
                 <span className="text-[15px] font-semibold text-ink">{meta.label}</span>
               </div>
 
-              <div className="flex gap-1.5">
-                {palette.colors.map((hex) => (
-                  <div
-                    key={hex}
-                    className="h-12 flex-1 rounded-lg"
-                    style={{ backgroundColor: hex }}
-                  />
-                ))}
-              </div>
+              {palette.images ? (
+                <div className="flex justify-center gap-3">
+                  {palette.images.map((src) => (
+                    <img
+                      key={src}
+                      src={assetUrl(src)}
+                      alt=""
+                      className="h-32 w-auto object-contain"
+                      draggable={false}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="flex gap-1.5">
+                  {palette.colors.map((hex) => (
+                    <div
+                      key={hex}
+                      className="h-12 flex-1 rounded-lg"
+                      style={{ backgroundColor: hex }}
+                    />
+                  ))}
+                </div>
+              )}
 
               <p className="mt-2 text-[14px] leading-snug text-ink-sub">{palette.description}</p>
             </button>
@@ -107,7 +126,7 @@ export function Step2Screen({
           }`}
         >
           <span className="flex items-center justify-center gap-1.5">
-            {currentIndex === COLOR_GROUPS.length - 1 ? '최종 결과 보기' : '다음'}
+            {currentIndex === groups.length - 1 ? '최종 결과 보기' : '다음'}
             <ChevronRight className="h-4 w-4" />
           </span>
         </button>
