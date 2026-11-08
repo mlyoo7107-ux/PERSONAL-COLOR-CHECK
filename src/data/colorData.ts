@@ -248,7 +248,7 @@ export const COLOR_GROUPS: ColorGroup[] = [
     name: 'RED',
     palettes: [
       { season: 'spring', colors: ['#F15A4A', '#E63D2F'], description: '밝고 생기 있는 레드' },
-      { season: 'autumn', colors: ['#C96A5B', '#B7282E'], description: '깊고 따뜻한 레드' },
+      { season: 'autumn', colors: ['#C96A5B', '#B7282E'], description: '깊고 차분한 레드' },
       { season: 'summer', colors: ['#E8B7CA', '#CB73A0'], description: '부드럽고 차분한 로즈' },
       { season: 'winter', colors: ['#D91E3F', '#781E3D'], description: '선명하고 강한 레드' },
     ],
@@ -258,9 +258,9 @@ export const COLOR_GROUPS: ColorGroup[] = [
     name: 'YELLOW',
     palettes: [
       { season: 'spring', colors: ['#FFE58A', '#FFD23F'], description: '밝고 화사한 옐로우' },
-      { season: 'autumn', colors: ['#DDAE32', '#C77E1B'], description: '골드빛 깊은 옐로우' },
+      { season: 'autumn', colors: ['#DDAE32', '#C77E1B'], description: '깊고 진한 머스터드 옐로우' },
       { season: 'summer', colors: ['#F3ECB4', '#D7CE76'], description: '부드럽고 은은한 옐로우' },
-      { season: 'winter', colors: ['#FAF6A0', '#F1E62B'], description: '차갑고 맑은 레몬 옐로우' },
+      { season: 'winter', colors: ['#FAF6A0', '#F1E62B'], description: '맑고 선명한 레몬 옐로우' },
     ],
   },
   {
@@ -270,7 +270,7 @@ export const COLOR_GROUPS: ColorGroup[] = [
       { season: 'spring', colors: ['#7BB932', '#309B48'], description: '싱그럽고 밝은 그린' },
       { season: 'autumn', colors: ['#9BAA7F', '#505B29'], description: '자연스럽고 깊은 그린' },
       { season: 'summer', colors: ['#D3E8DF', '#86BFAE'], description: '부드럽고 은은한 민트 그린' },
-      { season: 'winter', colors: ['#198C79', '#0D564D'], description: '차갑고 선명한 그린' },
+      { season: 'winter', colors: ['#198C79', '#0D564D'], description: '선명하고 진한 그린' },
     ],
   },
   {
@@ -280,7 +280,7 @@ export const COLOR_GROUPS: ColorGroup[] = [
       { season: 'spring', colors: ['#8FD8E5', '#28A8C7'], description: '맑고 경쾌한 블루' },
       { season: 'autumn', colors: ['#518A9B', '#086E78'], description: '차분하고 깊은 블루' },
       { season: 'summer', colors: ['#9CCAE5', '#8293B8'], description: '부드럽고 우아한 블루' },
-      { season: 'winter', colors: ['#2457D6', '#1D2855'], description: '강하고 차가운 블루' },
+      { season: 'winter', colors: ['#2457D6', '#1D2855'], description: '강하고 선명한 블루' },
     ],
   },
   {
@@ -288,7 +288,7 @@ export const COLOR_GROUPS: ColorGroup[] = [
     name: 'BASIC',
     palettes: [
       { season: 'spring', colors: ['#FFF2CB', '#FFDDA0'], description: '라이트 베이지와 크림' },
-      { season: 'autumn', colors: ['#D8B36C', '#69491F'], description: '골드 베이지와 브라운' },
+      { season: 'autumn', colors: ['#D8B36C', '#69491F'], description: '딥 베이지와 브라운' },
       { season: 'summer', colors: ['#BBB8BC', '#8A626A'], description: '소프트 그레이와 로즈 브라운' },
       { season: 'winter', colors: ['#F7F7F7', '#151515'], description: '퓨어 화이트와 블랙' },
     ],

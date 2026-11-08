@@ -41,7 +41,7 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
 
         <div className="mt-5 flex items-center gap-2 text-ink-sub">
           <Clock className="h-4 w-4 text-tone" />
-          <span className="text-[15px]">약 3분 소요</span>
+          <span className="text-[15px]">약 4분 소요</span>
         </div>
       </div>
 

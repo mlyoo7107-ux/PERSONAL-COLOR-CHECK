@@ -82,6 +82,10 @@ export function ResultScreen({
   const isTie = topSeasons.length > 1;
   const displaySeason = primarySeason ?? topSeasons[0];
   const meta = SEASON_META[displaySeason];
+  // 동점일 때 제목: 추천 기준 계절을 앞에 두고 "여름·가을 복합형"처럼 표시
+  const tieLabels = [displaySeason, ...topSeasons.filter((s) => s !== displaySeason)]
+    .map((s) => SEASON_META[s].label)
+    .join('·');
   // 봄(밝은 노랑) 배경은 흰 글자가 잘 안 보여서 진한 글자 사용
   const lightHero = displaySeason === 'spring';
   const conf = CONFIDENCE_TEXT[confidence];
@@ -166,9 +170,14 @@ export function ResultScreen({
         <div className={`px-6 pb-6 pt-7 ${lightHero ? 'text-ink' : 'text-white'}`}>
           <p className="font-mono text-[13px] tracking-[0.2em] opacity-90">RESULT</p>
           <p className="mt-2 font-display text-[30px] font-black leading-tight">
-            {isTie ? '복합형 특성' : RESULT_TITLES[displaySeason]}
+            {isTie ? `${tieLabels} 복합형` : RESULT_TITLES[displaySeason]}
           </p>
-          {!isTie && (
+          {isTie ? (
+            <div className="mt-1 space-y-0.5 text-[15px] opacity-90">
+              <p>{tieLabels} 계절의 특성이 함께 나타나요</p>
+              <p>추천 컬러는 {SEASON_META[displaySeason].label} 기준으로 보여 드려요</p>
+            </div>
+          ) : (
             <div className="mt-1 space-y-0.5 text-[15px] opacity-90">
               <p>1순위 계절 · {SEASON_META[displaySeason].label}</p>
               {secondSeason && <p>2순위 계절 · {SEASON_META[secondSeason].label}</p>}
@@ -546,6 +555,36 @@ function TagRow({ tags }: { tags: string[] }) {
   );
 }
 
+// 해시태그에 나오는 컬러 용어 풀이 (해당 계절 태그에 있는 용어만 보여 줌)
+const TERM_GLOSSARY: { key: string; text: string }[] = [
+  { key: '청색', text: '맑고 깨끗한 색' },
+  { key: '탁색', text: '회색빛이 섞인 차분한 색' },
+  { key: '페일', text: '아주 연하고 여린 톤' },
+  { key: '라이트', text: '밝고 연한 톤' },
+  { key: '브라이트', text: '밝고 선명한 톤' },
+  { key: '비비드', text: '가장 선명하고 강한 톤' },
+  { key: '소프트', text: '부드럽고 은은한 톤' },
+  { key: '뮤트', text: '회색빛이 섞인 차분한 톤' },
+  { key: '딥', text: '깊고 진한 톤' },
+  { key: '다크', text: '어둡고 무게감 있는 톤' },
+];
+
+function TermGlossary({ tags }: { tags: string[] }) {
+  const terms = TERM_GLOSSARY.filter((g) => tags.some((t) => t.includes(g.key)));
+  if (terms.length === 0) return null;
+  return (
+    <p className="mt-2 rounded-lg bg-canvas px-3 py-2 text-[12px] leading-relaxed text-ink-sub">
+      <span className="font-semibold text-ink">용어 풀이 </span>
+      {terms.map((g, i) => (
+        <span key={g.key} className="whitespace-nowrap">
+          {i > 0 && <span className="mx-1 text-border">·</span>}
+          {g.key}: {g.text}
+        </span>
+      ))}
+    </p>
+  );
+}
+
 /** 여성 결과 스타일 가이드: 일러스트·파운데이션·립·피부/섀도·헤어·향 */
 function FemaleStyleGuide({ season }: { season: Season }) {
   const s = FEMALE_STYLE[season];
@@ -557,6 +596,7 @@ function FemaleStyleGuide({ season }: { season: Season }) {
         <p className="mt-1 text-[17px] font-bold leading-snug text-ink">{label} 타입 여성 스타일</p>
         <p className="mt-1 text-[14px] leading-relaxed text-ink-sub">{s.description}</p>
         <TagRow tags={s.tags} />
+        <TermGlossary tags={s.tags} />
       </div>
       <img
         src={assetUrl(s.illustration)}
