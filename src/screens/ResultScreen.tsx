@@ -352,7 +352,7 @@ export function ResultScreen({
       {/* Notice */}
       <div className="mt-4 rounded-2xl border border-border bg-tone-soft/12 p-4">
         <p className="text-[14px] leading-relaxed text-ink-sub">
-          본 결과는 책의 내용을 바탕으로 구성한 입문용 셀프 체크입니다.
+          본 결과는 간단한 문항과 컬러 비교로 알아보는 입문용 셀프 체크 결과입니다.
           <br />
           퍼스널컬러는 피부 표현, 윤곽, 명도·채도, 청탁감, 그리고 전체적인 조화를 함께 비교하며
           확인하는 것이 중요합니다.

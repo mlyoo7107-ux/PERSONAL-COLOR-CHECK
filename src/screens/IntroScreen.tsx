@@ -63,7 +63,7 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
       {/* Notice */}
       <div className="mt-5 rounded-2xl border border-border bg-card/60 p-5">
         <p className="text-[15px] leading-relaxed text-ink-sub">
-          이 진단은 책의 내용을 이해하기 위한 입문용 셀프 체크입니다. 개인의 판단, 조명,
+          이 진단은 나에게 어울리는 컬러의 방향을 가볍게 알아보는 입문용 셀프 체크입니다. 개인의 판단, 조명,
           모니터 환경에 따라 결과가 달라질 수 있으며 전문가의 퍼스널컬러 진단 결과와 다를 수
           있습니다.
         </p>
