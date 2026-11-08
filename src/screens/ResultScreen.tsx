@@ -21,9 +21,7 @@ import {
   RESULT_KEYWORDS,
   RESULT_TIES,
   MALE_STYLE,
-  SEASON_CHARTS,
-  SEASON_STYLE,
-  HAIR_SWATCHES,
+  FEMALE_STYLE,
   SEASON_META,
   TIE_MESSAGES,
   assetUrl,
@@ -246,49 +244,35 @@ export function ResultScreen({
             {SEASON_META[displaySeason].label} 전체 컬러 차트 보기
             <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
           </summary>
-          <img
-            src={assetUrl(
-              gender === 'male' ? MALE_STYLE[displaySeason].palette : SEASON_CHARTS[displaySeason],
-            )}
-            alt={`${SEASON_META[displaySeason].label} 컬러 차트`}
-            className="mx-auto mt-3 w-full max-w-[360px]"
-            loading="lazy"
-          />
+          {gender === 'male' ? (
+            <img
+              src={assetUrl(MALE_STYLE[displaySeason].palette)}
+              alt={`${SEASON_META[displaySeason].label} 컬러 차트`}
+              className="mx-auto mt-3 w-full max-w-[360px]"
+              loading="lazy"
+            />
+          ) : (
+            <>
+              <p className="mt-2 text-[12px] text-ink-sub">옆으로 넘겨 보세요.</p>
+              <div className="-mx-5 mt-2 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2">
+                {FEMALE_STYLE[displaySeason].colorCards.map((src, i) => (
+                  <img
+                    key={src}
+                    src={assetUrl(src)}
+                    alt={`${SEASON_META[displaySeason].label} 컬러 카드 ${i + 1}`}
+                    className="w-[78%] flex-shrink-0 snap-center rounded-xl border border-border"
+                    loading="lazy"
+                  />
+                ))}
+              </div>
+            </>
+          )}
         </details>
       </div>
 
-      {/* Fashion & hair colors (여성) */}
+      {/* Female style guide (COLOR.M 여성 컬러 톤 카드) */}
       {gender === 'female' && (
-      <div className="mt-4 overflow-hidden rounded-2xl bg-card shadow-soft">
-        <div className="p-5">
-          <p className="text-[15px] font-semibold text-ink">
-            {SEASON_META[displaySeason].label} 패션 컬러
-          </p>
-          <p className="mt-1 text-[13px] text-ink-sub">{SEASON_STYLE[displaySeason].mood}</p>
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {SEASON_STYLE[displaySeason].fashion.map((c) => (
-              <span key={c} className="rounded-full bg-tone-soft/30 px-2.5 py-1 text-[13px] text-ink">
-                {c}
-              </span>
-            ))}
-          </div>
-
-          <p className="mt-5 text-[15px] font-semibold text-ink">어울리는 헤어 컬러</p>
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {SEASON_STYLE[displaySeason].hair.map((c) => (
-              <span key={c} className="rounded-full border border-border px-2.5 py-1 text-[13px] text-ink-sub">
-                {c}
-              </span>
-            ))}
-          </div>
-          <img
-            src={assetUrl(HAIR_SWATCHES[displaySeason])}
-            alt={`${SEASON_META[displaySeason].label} 타입 헤어 컬러 견본`}
-            className="mt-3 w-full rounded-lg"
-            draggable={false}
-          />
-        </div>
-      </div>
+        <FemaleStyleGuide season={displaySeason} />
       )}
 
       {/* Male style guide (COLOR.M 남성 패션 카드) */}
@@ -460,6 +444,104 @@ export function ResultScreen({
           <RotateCcw className="h-4 w-4" />
           결과 처음부터 다시 확인하기
         </button>
+      </div>
+    </div>
+  );
+}
+
+function TagRow({ tags }: { tags: string[] }) {
+  return (
+    <p className="mt-1 flex flex-wrap gap-x-1.5 text-[13px] leading-relaxed text-tone-deep">
+      {tags.map((t) => (
+        <span key={t} className="whitespace-nowrap">
+          {t}
+        </span>
+      ))}
+    </p>
+  );
+}
+
+/** 여성 결과 스타일 가이드: 일러스트·파운데이션·립·피부/섀도·헤어·향 */
+function FemaleStyleGuide({ season }: { season: Season }) {
+  const s = FEMALE_STYLE[season];
+  const label = SEASON_META[season].label;
+  return (
+    <div className="mt-4 overflow-hidden rounded-2xl bg-card shadow-soft">
+      <div className="px-5 pt-5">
+        <p className="font-mono text-[12px] tracking-[0.15em] text-tone-deep">WOMAN'S STYLE</p>
+        <p className="mt-1 text-[17px] font-bold leading-snug text-ink">{label} 타입 여성 스타일</p>
+        <p className="mt-1 text-[14px] leading-relaxed text-ink-sub">{s.description}</p>
+        <TagRow tags={s.tags} />
+      </div>
+      <img
+        src={assetUrl(s.illustration)}
+        alt={`${label} 타입 여성 스타일 일러스트`}
+        className="mx-auto mt-3 w-full max-w-[340px]"
+        draggable={false}
+      />
+
+      <div className="p-5">
+        <p className="text-[15px] font-semibold text-ink">파운데이션</p>
+        <div className="mt-3 grid grid-cols-6 gap-1.5">
+          {s.foundation.map((f) => (
+            <div key={f.code} className="flex flex-col items-center">
+              <span
+                className="block h-10 w-10 rounded-full ring-1 ring-inset ring-black/10"
+                style={{ backgroundColor: f.hex }}
+              />
+              <span className="mt-1 font-mono text-[11px] text-ink-sub">{f.code}</span>
+            </div>
+          ))}
+        </div>
+
+        <p className="mt-6 text-[15px] font-semibold text-ink">립 컬러</p>
+        <TagRow tags={s.lipTags} />
+        <div className="mt-3 grid grid-cols-3 gap-x-2 gap-y-3">
+          {s.lips.map((src) => (
+            <img key={src} src={assetUrl(src)} alt="" className="w-full" draggable={false} />
+          ))}
+        </div>
+
+        <p className="mt-6 text-[15px] font-semibold text-ink">블러셔 · 파운데이션 · 아이섀도</p>
+        <TagRow tags={s.skinTags} />
+        <img
+          src={assetUrl(s.skin)}
+          alt={`${label} 타입 블러셔, 파운데이션, 아이섀도 컬러`}
+          className="mx-auto mt-3 w-full max-w-[300px]"
+          draggable={false}
+        />
+
+        <p className="mt-6 text-[15px] font-semibold text-ink">어울리는 헤어 컬러</p>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {s.hair.map((c) => (
+            <span key={c} className="rounded-full border border-border px-2.5 py-1 text-[13px] text-ink-sub">
+              {c}
+            </span>
+          ))}
+        </div>
+        <img
+          src={assetUrl(s.hairImage)}
+          alt={`${label} 타입 헤어 컬러 견본`}
+          className="mx-auto mt-3 w-full max-w-[300px]"
+          draggable={false}
+        />
+
+        <p className="mt-6 text-[15px] font-semibold text-ink">어울리는 향</p>
+        <div className="mt-2 flex items-center gap-4">
+          <img
+            src={assetUrl(s.perfume)}
+            alt={`${label} 타입 향수 일러스트`}
+            className="h-24 w-auto flex-shrink-0"
+            draggable={false}
+          />
+          <div className="flex flex-wrap gap-1.5">
+            {s.scents.map((c) => (
+              <span key={c} className="rounded-full bg-tone-soft/30 px-2.5 py-1 text-[13px] text-ink">
+                {c}
+              </span>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

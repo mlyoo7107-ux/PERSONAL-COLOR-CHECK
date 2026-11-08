@@ -76,14 +76,6 @@ const menImg = (season: Season) => ({
   hairImage: `style/hair/${season}-hair-men.jpg`,
 });
 
-// 여성 결과 헤어 견본 사진 (퍼스널컬러 강의안_춘천기계공고 헤어 슬라이드)
-export const HAIR_SWATCHES: Record<Season, string> = {
-  spring: 'style/hair/spring-hair.jpg',
-  summer: 'style/hair/summer-hair.jpg',
-  autumn: 'style/hair/autumn-hair.jpg',
-  winter: 'style/hair/winter-hair.jpg',
-};
-
 export const MALE_STYLE: Record<Season, MaleStyle> = {
   spring: {
     ...menImg('spring'),
@@ -143,39 +135,104 @@ export const MALE_STYLE: Record<Season, MaleStyle> = {
   },
 };
 
-// 계절별 패션·헤어 컬러 (퍼스널컬러 강의안_춘천기계공고 자료) — 여성 결과에 사용
-export const SEASON_STYLE: Record<
-  Season,
-  { mood: string; fashion: string[]; hair: string[] }
-> = {
+// ── 여성 결과 스타일 가이드 (public/style/women) ──
+// 일러스트·파운데이션: 사계절 일러스트 차트(A4가로)3.ai
+// 립·피부·섀도·헤어·향·컬러 카드: 사계절 컬러 톤_핸드폰용(RGB)_여성용2.ai
+export interface FemaleStyle {
+  illustration: string;
+  description: string;
+  tags: string[];
+  foundation: { code: string; hex: string }[];
+  lipTags: string[];
+  lips: string[];
+  skinTags: string[];
+  skin: string;
+  hair: string[];
+  hairImage: string;
+  scents: string[];
+  perfume: string;
+  /** 전체 컬러 차트 (컬러 카드 3장 + 립 컬러 카드) */
+  colorCards: string[];
+}
+
+const womenImg = (season: Season) => ({
+  illustration: `style/women/${season}-illust.jpg`,
+  lips: [1, 2, 3, 4, 5].map((n) => `style/women/${season}-lip${n}.png`),
+  skin: `style/women/${season}-skin.jpg`,
+  hairImage: `style/women/${season}-hair.jpg`,
+  perfume: `style/women/${season}-perfume.png`,
+  colorCards: [1, 2, 3, 4].map((n) => `style/women/${season}-color${n}.jpg`),
+});
+
+export const FEMALE_STYLE: Record<Season, FemaleStyle> = {
   spring: {
-    mood: '밝고 따뜻하며 생기 있는 색상 (Light & Warm)',
-    fashion: ['아이보리', '밝은 베이지', '코랄 핑크', '살몬 핑크', '소프트 옐로우', '라이트 네이비', '민트 그린(포인트)'],
-    hair: ['밀크 브라운', '허니 브라운', '골드 브라운', '옐로우 브라운', '오렌지 브라운'],
+    ...womenImg('spring'),
+    description: '경쾌하고 발랄하며 귀여운 스타일입니다.',
+    tags: ['#경쾌', '#발랄', '#귀여운', '#청색', '#봄라이트', '#봄소프트', '#봄브라이트', '#봄비비드'],
+    foundation: [
+      { code: '23W', hex: '#F8C3A0' },
+      { code: '21W', hex: '#F5D1AD' },
+      { code: '17W', hex: '#FDE1C6' },
+      { code: '17N', hex: '#FBDBC6' },
+      { code: '21N', hex: '#F0CDB4' },
+      { code: '23N', hex: '#E3BB9E' },
+    ],
+    lipTags: ['#코랄', '#코랄핑크', '#코랄레드', '#레드', '#오렌지', '#오렌지 레드'],
+    skinTags: ['#코랄', '#코랄핑크', '#코랄레드', '#레드', '#오렌지', '#오렌지 레드'],
+    hair: ['옐로우 브라운', '골든 브라운', '코랄 브라운', '오렌지 브라운', '내추럴 브라운'],
+    scents: ['달콤한 향', '상큼한 향', '시트러스 향'],
   },
   summer: {
-    mood: '차갑고 부드러운 파스텔 톤 (Cool & Soft)',
-    fashion: ['화이트', '라이트 그레이', '실버 블루', '연보라', '말린 장미색', '쿨 핑크', '네이비'],
-    hair: ['애쉬 브라운', '쿨 브라운', '코코아 브라운', '매트 브라운', '로즈 브라운'],
+    ...womenImg('summer'),
+    description: '로맨틱하고 조용한 여성스러운 스타일입니다.',
+    tags: ['#조용한', '#여성스러운', '#우아한', '#탁색', '#여름페일', '#여름라이트', '#여름뮤트', '#여름소프트'],
+    foundation: [
+      { code: '23C', hex: '#E4B3A4' },
+      { code: '21C', hex: '#F1C2BB' },
+      { code: '17C', hex: '#F8DBD9' },
+      { code: '17N', hex: '#FCDECB' },
+      { code: '21N', hex: '#F0CDB4' },
+      { code: '23N', hex: '#E3BB9E' },
+    ],
+    lipTags: ['#로즈', '#플럼', '#쿨핑크', '#핑크베리'],
+    skinTags: ['#로즈베이지', '#로즈퍼플', '#연한그레이', '#로즈피치'],
+    hair: ['로즈 브라운', '그레이 브라운', '와인 블랙', '다크 브라운'],
+    scents: ['비누 향', '플로럴 향', '자스민 향', '은은한 향'],
   },
   autumn: {
-    mood: '따뜻하고 깊이 있으며 차분한 색상 (Deep & Muted)',
-    fashion: ['베이지', '카멜', '모카 베이지', '올리브 그린', '브라운', '딥 네이비', '웜 네이비'],
-    hair: ['레드 브라운', '골든 브라운', '오렌지 브라운', '카키 브라운', '딥 초코 브라운'],
+    ...womenImg('autumn'),
+    description: '차분하고 내추럴한 클래식한 스타일입니다.',
+    tags: ['#차분', '#내추럴', '#클래식', '#탁색', '#가을뮤트', '#가을소프트', '#가을딥', '#가을다크'],
+    foundation: [
+      { code: '25W', hex: '#D7AB77' },
+      { code: '23W', hex: '#E9C9A7' },
+      { code: '21W', hex: '#FBE1C5' },
+      { code: '21N', hex: '#FCDFC7' },
+      { code: '23N', hex: '#ECC2A7' },
+      { code: '25N', hex: '#D2A485' },
+    ],
+    lipTags: ['#베이지', '#딥오렌지', '#딥레드', '#브라운', '#버건디'],
+    skinTags: ['#베이지', '#브라운', '#버건디', '#올리브 그린'],
+    hair: ['레드 브라운', '골든 브라운', '블랙 브라운', '애시 브라운'],
+    scents: ['우디 향', '럭셔리 향', '고혹적인 향'],
   },
   winter: {
-    mood: '선명하고 차가운 고채도 색상과 무채색 (Clear & Cool)',
-    fashion: ['블랙', '퓨어 화이트', '로열 블루', '딥 네이비', '트루 레드', '버건디(포인트)'],
-    hair: ['딥 블랙 브라운', '다크 브라운', '쿨 초코 브라운', '블루 블랙', '애쉬 블랙'],
+    ...womenImg('winter'),
+    description: '심플하고 세련된 모던한 스타일입니다.',
+    tags: ['#심플', '#모던', '#세련', '#대비감', '#청색', '#겨울브라이트', '#겨울비비드', '#겨울딥', '#겨울다크'],
+    foundation: [
+      { code: '25C', hex: '#D49984' },
+      { code: '23C', hex: '#EABBA5' },
+      { code: '21C', hex: '#FBDACE' },
+      { code: '21N', hex: '#FCDFC7' },
+      { code: '23N', hex: '#ECC2A7' },
+      { code: '25N', hex: '#D2A485' },
+    ],
+    lipTags: ['#마젠타', '#퍼플', '#베리', '#플럼', '#블러드레드'],
+    skinTags: ['#아이보리', '#스모크 그레이', '#딥퍼플'],
+    hair: ['블루 블랙', '다크 브라운', '그레이 브라운', '실버 그레이'],
+    scents: ['머스크 향', '시크한 향', '독특한 향', '매혹적인 향'],
   },
-};
-
-// 계절별 전체 톤 차트 (나를 빛나게 하는 색 강의 자료)
-export const SEASON_CHARTS: Record<Season, string> = {
-  spring: 'style/spring-chart.png',
-  summer: 'style/summer-chart.png',
-  autumn: 'style/autumn-chart.png',
-  winter: 'style/winter-chart.png',
 };
 
 export const SEASON_META: Record<Season, { label: string; color: string; temp: Temperature }> = {
