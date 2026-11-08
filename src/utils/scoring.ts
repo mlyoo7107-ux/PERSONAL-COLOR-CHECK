@@ -7,6 +7,8 @@ export interface Scores {
   cool: number;
   clear: number;
   soft: number;
+  light: number;
+  deep: number;
   spring: number;
   summer: number;
   autumn: number;
@@ -19,11 +21,15 @@ export const createEmptyScores = (): Scores => ({
   cool: 0,
   clear: 0,
   soft: 0,
+  light: 0,
+  deep: 0,
   spring: 0,
   summer: 0,
   autumn: 0,
   winter: 0,
 });
+
+export type Confidence = 'high' | 'medium' | 'low';
 
 export interface DiagnosisResult {
   /** Primary season (null when fully tied) */
@@ -36,11 +42,28 @@ export interface DiagnosisResult {
   lean: Temperature | null;
   /** Step 1 clarity preference (clear / soft / equal) */
   clarity: Clarity | 'equal';
-  /** Season scores for display */
+  /** 최종 계절 점수 (STEP 2 선택 + STEP 1 가산점) */
   seasonScores: Pick<Scores, 'spring' | 'summer' | 'autumn' | 'winter'>;
-  /** All four Step-1 scores for the save card */
-  step1: Pick<Scores, 'warm' | 'neutral' | 'cool' | 'clear' | 'soft'>;
+  /** STEP 2에서 계절별로 고른 개수 */
+  picks: Pick<Scores, 'spring' | 'summer' | 'autumn' | 'winter'>;
+  /** STEP 1 점수 */
+  step1: Pick<Scores, 'warm' | 'neutral' | 'cool' | 'clear' | 'soft' | 'light' | 'deep'>;
+  /** STEP 1 웜·쿨 결과와 최종 계절의 웜·쿨이 서로 다른지 */
+  conflict: boolean;
+  /** 결과 확신도 */
+  confidence: Confidence;
 }
+
+// STEP 1 결과를 계절 점수에 더할 때의 가중치 (STEP 2 한 문항 = 1점)
+// 예: 웜이 쿨보다 3개 많으면 봄·가을에 +1.5
+const TEMP_WEIGHT = 0.5;
+const CLARITY_WEIGHT = 0.5;
+const DEPTH_WEIGHT = 0.5;
+
+const LIGHT_SEASONS: Season[] = ['spring', 'summer'];
+const CLEAR_SEASONS: Season[] = ['spring', 'winter'];
+
+const round2 = (n: number) => Math.round(n * 100) / 100;
 
 const tieKey = (a: Season, b: Season): string => {
   // Ensure consistent ordering against TIE_MESSAGES keys
@@ -112,11 +135,31 @@ export const computeStep1Result = (
 };
 
 export const computeDiagnosis = (scores: Scores): DiagnosisResult => {
-  const seasonScores = {
+  const picks = {
     spring: scores.spring,
     summer: scores.summer,
     autumn: scores.autumn,
     winter: scores.winter,
+  };
+
+  // STEP 2 선택 개수에 STEP 1(웜·쿨, 선명·부드러움, 밝은·깊은 톤) 결과를 가산점으로 더함
+  const tempLead = scores.warm - scores.cool;
+  const clarityLead = scores.clear - scores.soft;
+  const depthLead = scores.light - scores.deep;
+  const bonus = (s: Season): number => {
+    const isWarm = SEASON_META[s].temp === 'warm';
+    const t = (isWarm ? Math.max(0, tempLead) : Math.max(0, -tempLead)) * TEMP_WEIGHT;
+    const isClear = CLEAR_SEASONS.includes(s);
+    const c = (isClear ? Math.max(0, clarityLead) : Math.max(0, -clarityLead)) * CLARITY_WEIGHT;
+    const isLight = LIGHT_SEASONS.includes(s);
+    const d = (isLight ? Math.max(0, depthLead) : Math.max(0, -depthLead)) * DEPTH_WEIGHT;
+    return t + c + d;
+  };
+  const seasonScores = {
+    spring: round2(picks.spring + bonus('spring')),
+    summer: round2(picks.summer + bonus('summer')),
+    autumn: round2(picks.autumn + bonus('autumn')),
+    winter: round2(picks.winter + bonus('winter')),
   };
 
   const entries = (Object.entries(seasonScores) as Array<[Season, number]>).sort(
@@ -171,6 +214,15 @@ export const computeDiagnosis = (scores: Scores): DiagnosisResult => {
     }
   }
 
+  // 웜·쿨 체크 결과와 최종 계절이 반대인지 (뉴트럴은 충돌로 보지 않음)
+  const resultSeason = primarySeason ?? topSeasons[0];
+  const conflict = temperature !== 'neutral' && SEASON_META[resultSeason].temp !== temperature;
+
+  // 확신도: 1·2위 점수 차이와 결과 일치 여부로 판단
+  const margin = entries[0][1] - (entries[1]?.[1] ?? 0);
+  const confidence: Confidence =
+    conflict || primarySeason === null || margin < 1 ? 'low' : margin >= 2 ? 'high' : 'medium';
+
   return {
     primarySeason,
     topSeasons,
@@ -178,13 +230,18 @@ export const computeDiagnosis = (scores: Scores): DiagnosisResult => {
     lean,
     clarity,
     seasonScores,
+    picks,
     step1: {
       warm: scores.warm,
       neutral: scores.neutral,
       cool: scores.cool,
       clear: scores.clear,
       soft: scores.soft,
+      light: scores.light,
+      deep: scores.deep,
     },
+    conflict,
+    confidence,
   };
 };
 

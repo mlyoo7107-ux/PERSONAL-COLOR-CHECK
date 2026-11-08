@@ -10,6 +10,7 @@ import {
   CalendarCheck,
   ChevronRight,
   ChevronDown,
+  Ban,
 } from 'lucide-react';
 
 // COLOR.M 퍼스널컬러 진단 예약 링크 (colorm.net의 "퍼스널컬러 진단 예약하기"와 동일)
@@ -19,6 +20,7 @@ import {
   RESULT_DESCRIPTIONS,
   RESULT_TITLES,
   RESULT_KEYWORDS,
+  WORST_COLORS,
   RESULT_TIES,
   MALE_STYLE,
   FEMALE_STYLE,
@@ -28,8 +30,27 @@ import {
 } from '@/data/colorData';
 import type { Season } from '@/data/colorData';
 import { GENDER_LABELS, type Gender } from '@/data/questions';
-import type { DiagnosisResult } from '@/utils/scoring';
+import type { DiagnosisResult, Confidence } from '@/utils/scoring';
 import { tieKeyFor, NEUTRAL_LEAN_TEXT } from '@/utils/scoring';
+
+const CONFIDENCE_TEXT: Record<Confidence, { label: string; badge: string; message: string }> = {
+  high: {
+    label: '높음',
+    badge: 'bg-emerald-100 text-emerald-700',
+    message: '체크와 컬러 비교 결과가 한 방향으로 모여 비교적 뚜렷한 결과예요.',
+  },
+  medium: {
+    label: '보통',
+    badge: 'bg-amber-100 text-amber-700',
+    message: '대체로 한 계절에 가깝지만 다른 계절 특성도 함께 보여요.',
+  },
+  low: {
+    label: '낮음',
+    badge: 'bg-rose-100 text-rose-700',
+    message:
+      '여러 계절의 특성이 비슷하게 나타나거나 결과가 엇갈렸어요. 전문가 드레이핑 진단으로 확인해 보시길 권해요.',
+  },
+};
 
 /** 결과 화면 "내 답변" 목록의 한 줄 */
 export interface AnswerItem {
@@ -56,10 +77,16 @@ export function ResultScreen({
   onJumpToAnswer,
 }: ResultScreenProps) {
   const [showAnswers, setShowAnswers] = useState(false);
-  const { primarySeason, topSeasons, seasonScores, temperature, lean } = result;
+  const { primarySeason, topSeasons, seasonScores, temperature, lean, picks, step1, conflict, confidence } =
+    result;
   const isTie = topSeasons.length > 1;
   const displaySeason = primarySeason ?? topSeasons[0];
   const meta = SEASON_META[displaySeason];
+  // 봄(밝은 노랑) 배경은 흰 글자가 잘 안 보여서 진한 글자 사용
+  const lightHero = displaySeason === 'spring';
+  const conf = CONFIDENCE_TEXT[confidence];
+  const seasonTempLabel = SEASON_META[displaySeason].temp === 'warm' ? '웜' : '쿨';
+  const fmt = (n: number) => (Number.isInteger(n) ? `${n}` : n.toFixed(1));
 
   const tieMsg = isTie
     ? TIE_MESSAGES[tieKeyFor(topSeasons[0], topSeasons[1])] ??
@@ -136,7 +163,7 @@ export function ResultScreen({
           background: `linear-gradient(135deg, ${meta.color} 0%, ${meta.color}cc 100%)`,
         }}
       >
-        <div className="px-6 pb-6 pt-7 text-white">
+        <div className={`px-6 pb-6 pt-7 ${lightHero ? 'text-ink' : 'text-white'}`}>
           <p className="font-mono text-[13px] tracking-[0.2em] opacity-90">RESULT</p>
           <p className="mt-2 font-display text-[30px] font-black leading-tight">
             {isTie ? '복합형 특성' : RESULT_TITLES[displaySeason]}
@@ -152,7 +179,9 @@ export function ResultScreen({
               (kw) => (
                 <span
                   key={kw}
-                  className="rounded-full bg-black/20 px-3 py-1 text-[14px] font-semibold text-white"
+                  className={`rounded-full px-3 py-1 text-[14px] font-semibold ${
+                    lightHero ? 'bg-white/60 text-ink' : 'bg-black/20 text-white'
+                  }`}
                 >
                   {kw}
                 </span>
@@ -189,6 +218,13 @@ export function ResultScreen({
             )}
           </div>
         </div>
+        {conflict && (
+          <p className="mt-3 rounded-xl bg-tone-soft/25 p-3 text-[14px] leading-relaxed text-ink">
+            STEP 1 체크에서는 {temperature === 'warm' ? '웜' : '쿨'}톤 쪽이었지만, 컬러 비교에서는{' '}
+            {SEASON_META[displaySeason].label}({seasonTempLabel}) 색을 더 많이 골랐어요. 두 결과가
+            달라 실제 천이나 제품을 얼굴에 대 보며 한 번 더 확인해 보시길 권해요.
+          </p>
+        )}
       </div>
 
       {/* Description */}
@@ -200,9 +236,14 @@ export function ResultScreen({
         </p>
       </div>
 
-      {/* Scores */}
+      {/* Scores + 결과 근거·확신도 */}
       <div className="mt-4 rounded-2xl bg-card p-5 shadow-soft">
-        <p className="mb-3 text-[15px] font-semibold text-ink">계절별 점수</p>
+        <div className="mb-3 flex items-center justify-between">
+          <p className="text-[15px] font-semibold text-ink">계절별 점수</p>
+          <span className={`rounded-full px-2.5 py-1 text-[12px] font-semibold ${conf.badge}`}>
+            결과 확신도 · {conf.label}
+          </span>
+        </div>
         <div className="space-y-3">
           {scoreRows.map((row) => (
             <div key={row.label}>
@@ -214,7 +255,7 @@ export function ResultScreen({
                   />
                   {row.label}
                 </span>
-                <span className="font-semibold text-ink">{row.value}점</span>
+                <span className="font-semibold text-ink">{fmt(row.value)}점</span>
               </div>
               <div className="h-2.5 w-full overflow-hidden rounded-full bg-border/60">
                 <div
@@ -228,6 +269,28 @@ export function ResultScreen({
             </div>
           ))}
         </div>
+
+        <div className="mt-4 space-y-1.5 border-t border-border pt-3 text-[13px] leading-relaxed text-ink-sub">
+          <p className="font-semibold text-ink">결과 근거</p>
+          <p>
+            <span className="text-ink">색상(웜·쿨)</span> 웜 {step1.warm} · 뉴트럴 {step1.neutral} · 쿨{' '}
+            {step1.cool}
+          </p>
+          <p>
+            <span className="text-ink">명도</span> 밝은 톤 {step1.light} · 깊은 톤 {step1.deep}
+          </p>
+          <p>
+            <span className="text-ink">채도·청탁</span> 선명·맑음 {step1.clear} · 부드러움·탁함 {step1.soft}
+          </p>
+          <p>
+            <span className="text-ink">컬러 비교</span> 봄 {picks.spring} · 여름 {picks.summer} · 가을{' '}
+            {picks.autumn} · 겨울 {picks.winter}
+          </p>
+          <p className="text-[12px]">
+            계절 점수 = 컬러 비교에서 고른 개수 + STEP 1 체크 결과(색상·명도·채도) 가산점
+          </p>
+          <p className="pt-1 text-ink">{conf.message}</p>
+        </div>
       </div>
 
       {/* Recommended palette */}
@@ -236,6 +299,28 @@ export function ResultScreen({
         <div className="space-y-4">
           <PaletteRow label="1순위 컬러" season={displaySeason} />
           {secondSeason && <PaletteRow label="2순위 컬러" season={secondSeason} />}
+        </div>
+
+        {/* 피하면 좋은 컬러 */}
+        <div className="mt-5 rounded-xl bg-canvas p-3">
+          <p className="flex items-center gap-1.5 text-[13px] font-semibold text-ink">
+            <Ban className="h-3.5 w-3.5 text-rose-500" />
+            얼굴 가까이에는 피하면 좋은 컬러
+          </p>
+          <p className="mt-1 text-[12px] leading-relaxed text-ink-sub">
+            {WORST_COLORS[displaySeason].reason}
+          </p>
+          <div className="mt-2 grid grid-cols-5 gap-2">
+            {WORST_COLORS[displaySeason].colors.map((c) => (
+              <div key={c.name} className="flex flex-col items-center">
+                <div
+                  className="h-10 w-full rounded-lg border border-border opacity-90"
+                  style={{ backgroundColor: c.hex }}
+                />
+                <span className="mt-1 text-center text-[11px] leading-tight text-ink-sub">{c.name}</span>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* 계절 전체 톤 차트 (저장 이미지에는 넣지 않음) */}

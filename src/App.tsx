@@ -5,7 +5,7 @@ import { Step1ResultScreen } from '@/screens/Step1ResultScreen';
 import { Step2Screen } from '@/screens/Step2Screen';
 import { ResultScreen } from '@/screens/ResultScreen';
 import { Footer } from '@/components/Footer';
-import { STEP1_QUESTIONS, type Gender, type OptionId, type Tone } from '@/data/questions';
+import { STEP1_QUESTIONS, type Gender, type OptionId, type Tone, type Depth, type Step1Option } from '@/data/questions';
 import { COLOR_GROUPS, TIE_GROUP, SEASON_META } from '@/data/colorData';
 import type { AnswerItem } from '@/screens/ResultScreen';
 import type { Season, Clarity } from '@/data/colorData';
@@ -18,9 +18,36 @@ import {
 
 type Screen = 'intro' | 'step1' | 'step1Result' | 'step2' | 'result';
 
+const SEASONS: Season[] = ['spring', 'summer', 'autumn', 'winter'];
+
+/** STEP 2 그룹마다 계절 카드 순서를 무작위로 섞음 */
+function shuffleOrders(): Record<string, Season[]> {
+  const orders: Record<string, Season[]> = {};
+  for (const g of [...COLOR_GROUPS, TIE_GROUP]) {
+    const arr = [...SEASONS];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    orders[g.id] = arr;
+  }
+  return orders;
+}
+
+/** 선택지가 올려 주는 점수 항목 */
+function optionScoreKeys(opt?: Step1Option): (keyof Scores)[] {
+  if (!opt) return [];
+  const keys: (keyof Scores)[] = [];
+  if (opt.temperature) keys.push(opt.temperature);
+  if (opt.clarity) keys.push(opt.clarity);
+  if (opt.depth) keys.push(opt.depth);
+  return keys;
+}
+
 // 결과 화면 답변 목록에 보여 줄 짧은 이름
 const TONE_LABEL: Record<Tone, string> = { warm: '웜', neutral: '뉴트럴', cool: '쿨' };
 const CLARITY_LABEL: Record<Clarity, string> = { clear: '선명', soft: '부드러움' };
+const DEPTH_LABEL: Record<Depth, string> = { light: '밝은 톤', deep: '깊은 톤' };
 
 function App() {
   const [screen, setScreen] = useState<Screen>('intro');
@@ -33,6 +60,8 @@ function App() {
   const [result, setResult] = useState<DiagnosisResult | null>(null);
   // 결과 화면에서 답변을 고치러 들어온 상태
   const [editing, setEditing] = useState(false);
+  // STEP 2 카드 순서 (진단마다 섞음, 계절 이름은 결과 전까지 숨김)
+  const [step2Orders, setStep2Orders] = useState<Record<string, Season[]>>(shuffleOrders);
 
   const questions = STEP1_QUESTIONS[gender];
   // 남성은 STEP 2 마지막에 넥타이 비교 문항을 추가
@@ -75,6 +104,8 @@ function App() {
               ? TONE_LABEL[opt.temperature]
               : opt.clarity
               ? CLARITY_LABEL[opt.clarity]
+              : opt.depth
+              ? DEPTH_LABEL[opt.depth]
               : opt.id)
           : '미응답',
       };
@@ -98,34 +129,26 @@ function App() {
       setSelections({});
       setScores(createEmptyScores());
       setResult(null);
+      setStep2Orders(shuffleOrders());
     }
     setGender(selected);
     setScreen('step1');
     setStep1Index(0);
   };
 
-  const handleStep1Select = (
-    questionId: number,
-    optionId: OptionId,
-    temperature?: Tone,
-    clarity?: Clarity,
-  ) => {
+  const handleStep1Select = (questionId: number, optionId: OptionId) => {
     const prev = answers[questionId];
     if (prev === optionId) return;
+    const q = questions.find((qq) => qq.id === questionId)!;
+    const nextOpt = q.options.find((o) => o.id === optionId)!;
+    const prevOpt = prev ? q.options.find((o) => o.id === prev) : undefined;
 
     setAnswers((a) => ({ ...a, [questionId]: optionId }));
     setScores((s) => {
       const next = { ...s };
-      // Undo previous choice's scoring contribution
-      if (prev) {
-        const prevQ = questions.find((q) => q.id === questionId)!;
-        const prevOpt = prevQ.options.find((o) => o.id === prev)!;
-        if (prevOpt.temperature) next[prevOpt.temperature] = Math.max(0, next[prevOpt.temperature] - 1);
-        if (prevOpt.clarity) next[prevOpt.clarity] = Math.max(0, next[prevOpt.clarity] - 1);
-      }
-      // Apply new choice
-      if (temperature) next[temperature] += 1;
-      if (clarity) next[clarity] += 1;
+      // 이전 선택 점수를 빼고 새 선택 점수를 더함
+      for (const key of optionScoreKeys(prevOpt)) next[key] = Math.max(0, next[key] - 1);
+      for (const key of optionScoreKeys(nextOpt)) next[key] += 1;
       return next;
     });
   };
@@ -184,6 +207,7 @@ function App() {
     setScores(createEmptyScores());
     setResult(null);
     setEditing(false);
+    setStep2Orders(shuffleOrders());
   };
 
   // 수정 중이고 모든 문항에 답했을 때만 "결과로 바로 가기" 표시
@@ -221,6 +245,7 @@ function App() {
         {screen === 'step2' && (
           <Step2Screen
             groups={step2Groups}
+            orders={step2Orders}
             currentIndex={step2Index}
             selections={selections}
             onSelect={handleStep2Select}

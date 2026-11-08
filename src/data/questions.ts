@@ -19,6 +19,9 @@ export type OptionId = 'A' | 'B' | 'C';
 /** 웜·쿨에 뉴트럴을 더한 톤 */
 export type Tone = Temperature | 'neutral';
 
+/** 명도(밝기): 밝은 톤(봄·여름 쪽) / 깊은 톤(가을·겨울 쪽) */
+export type Depth = 'light' | 'deep';
+
 export interface Step1Option {
   id: OptionId;
   /** 선택지 맨 앞에 굵게 표시할 짧은 이름 (예: 웜, 뉴트럴, 쿨) */
@@ -27,7 +30,10 @@ export interface Step1Option {
   chips?: ColorChip[];
   /** 웜·뉴트럴·쿨 중 어느 점수에 1점을 더할지 */
   temperature?: Tone;
+  /** 선명(봄·겨울 쪽) / 부드러움(여름·가을 쪽) */
   clarity?: Clarity;
+  /** 밝은 톤 / 깊은 톤 */
+  depth?: Depth;
 }
 
 export interface Step1Question {
@@ -66,9 +72,78 @@ const CHIPS = {
     { name: '퓨어 화이트', color: '#FFFFFF' },
     { name: '쿨 화이트', color: '#F1F5FA' },
   ],
+  // 청탁: 같은 색을 맑은 버전 / 회색빛이 섞인 버전으로 비교
+  clearTone: [
+    { name: '맑은 핑크', color: '#F2679A' },
+    { name: '맑은 블루', color: '#3B8FE0' },
+    { name: '맑은 그린', color: '#22B07D' },
+  ],
+  grayishTone: [
+    { name: '그레이시 핑크', color: '#C59AA6' },
+    { name: '그레이시 블루', color: '#8B9DB2' },
+    { name: '그레이시 그린', color: '#93A597' },
+  ],
+  // 명도: 같은 계열을 밝은 버전 / 깊은 버전으로 비교
+  lightTone: [
+    { name: '라이트 핑크', color: '#F7CAD6' },
+    { name: '라이트 블루', color: '#BFD9F2' },
+    { name: '라이트 베이지', color: '#F1E1C8' },
+  ],
+  deepTone: [
+    { name: '와인', color: '#6E2440' },
+    { name: '네이비', color: '#1F2C55' },
+    { name: '다크 브라운', color: '#4E3424' },
+  ],
 } satisfies Record<string, ColorChip[]>;
 
-// 여성 진단 문항 (기존 배포 버전과 동일)
+// 청탁(맑음·탁함) 문항: 여성·남성 공통
+const CLEARNESS_QUESTION = (id: number): Step1Question => ({
+  id,
+  title: '맑은 색 vs 회색빛이 섞인 색',
+  note: '같은 색이라도 맑은 쪽과 회색빛이 살짝 섞인 쪽 중, 얼굴이 더 깨끗해 보이는 쪽을 고르세요.',
+  options: [
+    {
+      id: 'A',
+      heading: '맑은 색',
+      text: '물감을 섞지 않은 듯 맑고 깨끗한 색이 얼굴을 더 화사하게 만든다.',
+      chips: CHIPS.clearTone,
+      clarity: 'clear',
+    },
+    {
+      id: 'B',
+      heading: '회색빛이 섞인 색',
+      text: '회색빛이 살짝 섞인 차분한 색(그레이시·뮤트 톤)이 얼굴을 더 편안하게 만든다.',
+      chips: CHIPS.grayishTone,
+      clarity: 'soft',
+    },
+  ],
+});
+
+// 명도(밝기) 문항: 여성·남성 공통
+const DEPTH_QUESTION = (id: number): Step1Question => ({
+  id,
+  title: '잘 어울리는 색의 밝기',
+  note: '색의 종류보다 밝기를 비교해 주세요. 얼굴이 더 환하고 또렷해 보였던 쪽을 고르세요.',
+  options: [
+    {
+      id: 'A',
+      heading: '밝은 톤',
+      text: '밝고 가벼운 색(라이트·파스텔 톤)을 입었을 때 얼굴이 환해 보인다.',
+      chips: CHIPS.lightTone,
+      depth: 'light',
+    },
+    {
+      id: 'B',
+      heading: '깊은 톤',
+      text: '깊고 진한 색(다크 톤)을 입었을 때 얼굴이 또렷하고 안정감 있어 보인다.',
+      chips: CHIPS.deepTone,
+      depth: 'deep',
+    },
+  ],
+});
+
+// 여성 진단 문항
+// 색상(웜·쿨) 5문항 + 채도 1 + 청탁 1 + 명도 1
 const FEMALE_QUESTIONS: Step1Question[] = [
   {
     id: 1,
@@ -101,15 +176,16 @@ const FEMALE_QUESTIONS: Step1Question[] = [
   {
     id: 2,
     title: '헤어와 눈동자 색',
+    note: '염색한 머리라면 눈썹과 눈동자 색을 기준으로 골라 주세요.',
     options: [
       {
         id: 'A',
-        text: '골드빛이나 따뜻한 갈색, 자연스러운 브라운 계열에 가깝다.',
+        text: '골드빛이나 노란기가 도는 따뜻한 갈색에 가깝다.',
         temperature: 'warm',
       },
       {
         id: 'B',
-        text: '레드 브라운, 그레이 브라운 또는 짙은 블랙 계열에 가깝다.',
+        text: '붉은기·잿빛이 도는 갈색, 또는 푸른빛이 도는 흑갈색에 가깝다.',
         temperature: 'cool',
       },
     ],
@@ -186,10 +262,12 @@ const FEMALE_QUESTIONS: Step1Question[] = [
       },
     ],
   },
+  CLEARNESS_QUESTION(6),
+  DEPTH_QUESTION(7),
   {
-    id: 6,
+    id: 8,
     title: '립스틱 색',
-    note: '발랐을 때 얼굴이 가장 생기 있어 보이는 줄을 고르세요. 같은 줄 안의 밝기 차이는 상관없어요.',
+    note: '평소 좋아하는 색보다, 실제로 발랐을 때 얼굴이 가장 생기 있어 보였던 줄을 고르세요. 같은 줄 안의 밝기 차이는 상관없어요.',
     options: [
       {
         id: 'A',
@@ -229,21 +307,22 @@ const FEMALE_QUESTIONS: Step1Question[] = [
 ];
 
 // 남성 진단 문항: 메이크업·액세서리 문항을 남성 스타일링 기준으로 교체
-// (점수 구조는 여성과 동일: 온도 5문항 + 청탁 1문항)
+// (점수 구조는 여성과 동일: 색상 5문항 + 채도 1 + 청탁 1 + 명도 1)
 const MALE_QUESTIONS: Step1Question[] = [
   FEMALE_QUESTIONS[0],
   {
     id: 2,
     title: '헤어·눈썹과 눈동자 색',
+    note: '염색한 머리라면 눈썹과 눈동자 색을 기준으로 골라 주세요.',
     options: [
       {
         id: 'A',
-        text: '머리카락과 눈썹, 눈동자가 따뜻한 갈색이나 자연스러운 브라운 계열에 가깝다.',
+        text: '머리카락과 눈썹, 눈동자가 노란기가 도는 따뜻한 갈색에 가깝다.',
         temperature: 'warm',
       },
       {
         id: 'B',
-        text: '머리카락과 눈썹, 눈동자가 짙은 블랙이나 그레이 브라운 계열에 가깝다.',
+        text: '머리카락과 눈썹, 눈동자가 잿빛 갈색이나 푸른빛이 도는 흑갈색에 가깝다.',
         temperature: 'cool',
       },
     ],
@@ -308,9 +387,12 @@ const MALE_QUESTIONS: Step1Question[] = [
       },
     ],
   },
+  CLEARNESS_QUESTION(6),
+  DEPTH_QUESTION(7),
   {
-    id: 6,
+    id: 8,
     title: '니트·재킷 색',
+    note: '평소 자주 입는 색보다, 입었을 때 얼굴이 밝아 보인다는 말을 들었던 쪽을 고르세요.',
     options: [
       {
         id: 'A',

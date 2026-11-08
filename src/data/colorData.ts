@@ -260,7 +260,7 @@ export const COLOR_GROUPS: ColorGroup[] = [
       { season: 'spring', colors: ['#FFE58A', '#FFD23F'], description: '밝고 화사한 옐로우' },
       { season: 'autumn', colors: ['#DDAE32', '#C77E1B'], description: '골드빛 깊은 옐로우' },
       { season: 'summer', colors: ['#F3ECB4', '#D7CE76'], description: '부드럽고 은은한 옐로우' },
-      { season: 'winter', colors: ['#E6FF00', '#B7BE00'], description: '강한 대비의 옐로우' },
+      { season: 'winter', colors: ['#FAF6A0', '#F1E62B'], description: '차갑고 맑은 레몬 옐로우' },
     ],
   },
   {
@@ -269,7 +269,7 @@ export const COLOR_GROUPS: ColorGroup[] = [
     palettes: [
       { season: 'spring', colors: ['#7BB932', '#309B48'], description: '싱그럽고 밝은 그린' },
       { season: 'autumn', colors: ['#9BAA7F', '#505B29'], description: '자연스럽고 깊은 그린' },
-      { season: 'summer', colors: ['#DCE9E0', '#35AC91'], description: '부드럽고 맑은 그린' },
+      { season: 'summer', colors: ['#D3E8DF', '#86BFAE'], description: '부드럽고 은은한 민트 그린' },
       { season: 'winter', colors: ['#198C79', '#0D564D'], description: '차갑고 선명한 그린' },
     ],
   },
@@ -326,6 +326,51 @@ export const RESULT_PALETTES: Record<Season, ColorChip[]> = {
     { hex: '#1E294B', name: '딥 네이비' },
     { hex: '#151515', name: '블랙' },
   ],
+};
+
+// 피하면 좋은 컬러 (워스트 컬러): 반대 계절의 대표적인 색
+// 얼굴 가까이(상의·립·스카프)에 두었을 때 피하면 좋은 색이에요. 하의·소품은 괜찮아요.
+export const WORST_COLORS: Record<Season, { reason: string; colors: ColorChip[] }> = {
+  spring: {
+    reason: '무겁고 어두운 색, 회색빛이 도는 차가운 색은 얼굴을 칙칙하고 피곤해 보이게 할 수 있어요.',
+    colors: [
+      { hex: '#151515', name: '블랙' },
+      { hex: '#4A4A4F', name: '차콜 그레이' },
+      { hex: '#6B1E33', name: '버건디' },
+      { hex: '#7D8796', name: '블루 그레이' },
+      { hex: '#3E2A55', name: '다크 퍼플' },
+    ],
+  },
+  summer: {
+    reason: '노란빛이 강하고 진한 색, 강한 블랙은 얼굴을 누렇거나 무거워 보이게 할 수 있어요.',
+    colors: [
+      { hex: '#151515', name: '블랙' },
+      { hex: '#E8711C', name: '오렌지' },
+      { hex: '#C99A1E', name: '머스터드' },
+      { hex: '#6E6B3A', name: '카키' },
+      { hex: '#9A4A2B', name: '브릭 브라운' },
+    ],
+  },
+  autumn: {
+    reason: '차갑고 쨍한 색, 하얗게 빛나는 색은 얼굴을 창백하고 들떠 보이게 할 수 있어요.',
+    colors: [
+      { hex: '#FFFFFF', name: '퓨어 화이트' },
+      { hex: '#D0007A', name: '마젠타' },
+      { hex: '#F4D7E6', name: '아이시 핑크' },
+      { hex: '#2457D6', name: '로열 블루' },
+      { hex: '#B9BEC6', name: '실버 그레이' },
+    ],
+  },
+  winter: {
+    reason: '노란빛이 도는 부드러운 색, 탁한 중간색은 얼굴을 흐리고 밋밋해 보이게 할 수 있어요.',
+    colors: [
+      { hex: '#C19A6B', name: '카멜' },
+      { hex: '#E6D3B3', name: '베이지' },
+      { hex: '#E8711C', name: '오렌지' },
+      { hex: '#C99A1E', name: '머스터드' },
+      { hex: '#D7A9A2', name: '더스티 핑크' },
+    ],
+  },
 };
 
 export const RESULT_DESCRIPTIONS: Record<Season, string> = {

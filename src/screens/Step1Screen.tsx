@@ -2,15 +2,14 @@ import { ChevronRight } from 'lucide-react';
 import { ProgressHeader } from '@/components/ProgressHeader';
 import { OptionButton } from '@/components/OptionButton';
 import { QuestionNav } from '@/components/QuestionNav';
-import type { Step1Question, OptionId, Tone } from '@/data/questions';
-import type { Clarity } from '@/data/colorData';
+import type { Step1Question, OptionId } from '@/data/questions';
 import { assetUrl } from '@/data/colorData';
 
 interface Step1ScreenProps {
   questions: Step1Question[];
   currentIndex: number;
   answers: Record<number, OptionId>;
-  onSelect: (questionId: number, optionId: OptionId, temperature?: Tone, clarity?: Clarity) => void;
+  onSelect: (questionId: number, optionId: OptionId) => void;
   onBack: () => void;
   onNext: () => void;
   onJump: (index: number) => void;
@@ -105,7 +104,7 @@ export function Step1Screen({
               text={opt.text}
               chips={opt.chips}
               selected={selected === opt.id}
-              onSelect={() => onSelect(question.id, opt.id, opt.temperature, opt.clarity)}
+              onSelect={() => onSelect(question.id, opt.id)}
             />
           ))}
         </div>

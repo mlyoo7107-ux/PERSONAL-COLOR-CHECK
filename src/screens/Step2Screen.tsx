@@ -1,11 +1,15 @@
 import { Check, ChevronRight } from 'lucide-react';
 import { ProgressHeader } from '@/components/ProgressHeader';
 import { QuestionNav } from '@/components/QuestionNav';
-import { SEASON_META, assetUrl } from '@/data/colorData';
+import { assetUrl } from '@/data/colorData';
 import type { Season, ColorGroup } from '@/data/colorData';
+
+const OPTION_LETTERS = ['A', 'B', 'C', 'D'];
 
 interface Step2ScreenProps {
   groups: ColorGroup[];
+  /** 그룹별 카드 순서 (섞인 계절 순서) */
+  orders: Record<string, Season[]>;
   currentIndex: number;
   selections: Record<string, Season | undefined>;
   onSelect: (groupId: string, season: Season) => void;
@@ -17,6 +21,7 @@ interface Step2ScreenProps {
 
 export function Step2Screen({
   groups,
+  orders,
   currentIndex,
   selections,
   onSelect,
@@ -28,6 +33,13 @@ export function Step2Screen({
   const group = groups[currentIndex];
   const selectedSeason = selections[group.id];
   const progress = ((currentIndex + 1) / groups.length) * 100;
+  // 진단 시작 때 섞어 둔 순서대로 보여 줌 (순서가 없으면 원래 순서)
+  const order = orders[group.id];
+  const orderedPalettes = order
+    ? order
+        .map((season) => group.palettes.find((p) => p.season === season))
+        .filter((p): p is (typeof group.palettes)[number] => Boolean(p))
+    : group.palettes;
 
   return (
     <div className="animate-slide-in">
@@ -64,9 +76,8 @@ export function Step2Screen({
       </div>
 
       <div className="mt-5 grid grid-cols-2 gap-3">
-        {group.palettes.map((palette) => {
+        {orderedPalettes.map((palette, i) => {
           const isSelected = selectedSeason === palette.season;
-          const meta = SEASON_META[palette.season];
           return (
             <button
               key={`${group.id}-${palette.season}`}
@@ -82,12 +93,15 @@ export function Step2Screen({
                   <Check className="h-3.5 w-3.5" />
                 </span>
               )}
+              {/* 계절 이름은 결과 전까지 숨김 (선입견 없이 색만 보고 고르도록) */}
               <div className="mb-2 flex items-center gap-1.5">
                 <span
-                  className="h-3 w-3 rounded-full"
-                  style={{ backgroundColor: meta.color }}
-                />
-                <span className="text-[15px] font-semibold text-ink">{meta.label}</span>
+                  className={`flex h-6 w-6 items-center justify-center rounded-full font-mono text-[13px] font-semibold ${
+                    isSelected ? 'bg-magenta text-white' : 'bg-border/60 text-ink-sub'
+                  }`}
+                >
+                  {OPTION_LETTERS[i]}
+                </span>
               </div>
 
               {palette.images ? (
