@@ -1,7 +1,7 @@
 import { Clock, ChevronRight, Sun, Smile, Shirt, Smartphone } from 'lucide-react';
 import type { Gender } from '@/data/questions';
 
-// 정확한 셀프 체크를 위한 준비 안내
+// 정확한 자가진단을 위한 준비 안내
 const PREP_TIPS = [
   { icon: Sun, text: '자연광이 드는 창가에서 거울을 보며 답해요.' },
   { icon: Smile, text: '맨얼굴이나 가벼운 메이크업 상태가 좋아요.' },
@@ -26,7 +26,7 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
       {/* Hero card */}
       <div className="mt-8 rounded-3xl bg-card p-7 shadow-card">
         <div className="mb-5 inline-flex rounded-full bg-tone-soft/40 px-3 py-1">
-          <span className="text-[13px] font-medium text-tone-deep">셀프 체크</span>
+          <span className="text-[13px] font-medium text-tone-deep">무료 자가진단</span>
         </div>
         <h1 className="font-display text-[30px] font-black leading-snug text-ink">
           나에게 어울리는
@@ -34,7 +34,7 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
           컬러 찾기
         </h1>
         <p className="mt-3 text-[17px] leading-relaxed text-ink-sub">
-          간단한 셀프 체크를 통해
+          간단한 자가진단으로
           <br />
           나와 조화를 이루는 컬러의 방향을 알아보세요.
         </p>
@@ -47,7 +47,7 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
 
       {/* Prep tips */}
       <div className="mt-5 rounded-2xl bg-card p-5 shadow-soft">
-        <p className="text-[16px] font-semibold text-ink">정확한 체크를 위한 준비</p>
+        <p className="text-[16px] font-semibold text-ink">정확한 자가진단을 위한 준비</p>
         <ul className="mt-3 space-y-2.5">
           {PREP_TIPS.map(({ icon: Icon, text }) => (
             <li key={text} className="flex items-start gap-2.5">
@@ -63,7 +63,7 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
       {/* Notice */}
       <div className="mt-5 rounded-2xl border border-border bg-card/60 p-5">
         <p className="text-[15px] leading-relaxed text-ink-sub">
-          이 셀프 체크는 나에게 어울리는 컬러의 방향을 가볍게 알아보는 입문용 테스트입니다. 개인의 판단, 조명,
+          이 자가진단은 나에게 어울리는 컬러의 방향을 가볍게 알아보는 입문용 테스트입니다. 개인의 판단, 조명,
           모니터 환경에 따라 결과가 달라질 수 있으며 전문가의 퍼스널컬러 진단 결과와 다를 수
           있습니다.
         </p>
@@ -76,14 +76,14 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
           onClick={() => onStart('female')}
           className="flex items-center justify-center gap-1.5 rounded-full bg-magenta py-4 text-[17px] font-semibold text-white shadow-soft transition-all active:scale-[0.98] hover:bg-magenta-deep"
         >
-          여성 체크
+          여성 자가진단
           <ChevronRight className="h-5 w-5" />
         </button>
         <button
           onClick={() => onStart('male')}
           className="flex items-center justify-center gap-1.5 rounded-full bg-ink py-4 text-[17px] font-semibold text-white shadow-soft transition-all active:scale-[0.98] hover:bg-ink/85"
         >
-          남성 체크
+          남성 자가진단
           <ChevronRight className="h-5 w-5" />
         </button>
       </div>

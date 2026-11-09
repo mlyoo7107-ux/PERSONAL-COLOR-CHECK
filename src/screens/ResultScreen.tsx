@@ -144,7 +144,7 @@ export function ResultScreen({
       },
     });
     const link = document.createElement('a');
-    link.download = `COLOR.M_퍼스널컬러_셀프체크결과_${GENDER_LABELS[gender]}.png`;
+    link.download = `COLOR.M_퍼스널컬러_자가진단결과_${GENDER_LABELS[gender]}.png`;
     link.href = canvas.toDataURL('image/png', 1);
     link.click();
   };
@@ -156,7 +156,7 @@ export function ResultScreen({
         <Sparkles className="h-5 w-5 text-magenta" />
         <h2 className="font-display text-[22px] font-black text-ink">나의 예상 퍼스널컬러</h2>
         <span className="ml-auto rounded-full bg-tone-soft/40 px-3 py-1 text-[13px] font-medium text-tone-deep">
-          {GENDER_LABELS[gender]} 체크
+          {GENDER_LABELS[gender]} 자가진단
         </span>
       </div>
 
@@ -446,7 +446,7 @@ export function ResultScreen({
       {/* Notice */}
       <div className="mt-4 rounded-2xl border border-border bg-tone-soft/12 p-4">
         <p className="text-[14px] leading-relaxed text-ink-sub">
-          본 결과는 간단한 문항과 컬러 비교로 알아보는 입문용 셀프 체크 결과입니다.
+          본 결과는 간단한 문항과 컬러 비교로 알아보는 입문용 자가진단 결과입니다.
           <br />
           퍼스널컬러는 피부 표현, 윤곽, 명도·채도, 청탁감, 그리고 전체적인 조화를 함께 비교하며
           확인하는 것이 중요합니다.
