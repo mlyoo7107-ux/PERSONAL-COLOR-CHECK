@@ -45,7 +45,7 @@ export function Step2Screen({
     <div className="animate-slide-in">
       <ProgressHeader
         stepLabel="STEP 2"
-        stepTitle="4계절 컬러그룹 셀프 진단"
+        stepTitle="4계절 컬러그룹 셀프 체크"
         current={currentIndex + 1}
         total={groups.length}
         onBack={onBack}

@@ -75,7 +75,7 @@ export function Step1ResultScreen({ scores, onContinue, onBack }: Step1ResultScr
           className="flex-[2] rounded-full bg-magenta py-3.5 text-[15px] font-semibold text-white shadow-soft transition-all active:scale-[0.98] hover:bg-magenta-deep"
         >
           <span className="flex items-center justify-center gap-1.5">
-            4계절 컬러 진단 계속하기
+            4계절 컬러 비교 계속하기
             <ChevronRight className="h-4 w-4" />
           </span>
         </button>

@@ -26,7 +26,7 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
       {/* Hero card */}
       <div className="mt-8 rounded-3xl bg-card p-7 shadow-card">
         <div className="mb-5 inline-flex rounded-full bg-tone-soft/40 px-3 py-1">
-          <span className="text-[13px] font-medium text-tone-deep">셀프 진단</span>
+          <span className="text-[13px] font-medium text-tone-deep">셀프 체크</span>
         </div>
         <h1 className="font-display text-[30px] font-black leading-snug text-ink">
           나에게 어울리는
@@ -63,27 +63,27 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
       {/* Notice */}
       <div className="mt-5 rounded-2xl border border-border bg-card/60 p-5">
         <p className="text-[15px] leading-relaxed text-ink-sub">
-          이 진단은 나에게 어울리는 컬러의 방향을 가볍게 알아보는 입문용 셀프 체크입니다. 개인의 판단, 조명,
+          이 셀프 체크는 나에게 어울리는 컬러의 방향을 가볍게 알아보는 입문용 테스트입니다. 개인의 판단, 조명,
           모니터 환경에 따라 결과가 달라질 수 있으며 전문가의 퍼스널컬러 진단 결과와 다를 수
           있습니다.
         </p>
       </div>
 
       {/* CTA: 성별 선택 후 바로 시작 */}
-      <p className="mt-7 text-center text-[15px] text-ink-sub">진단 유형을 선택해 시작하세요</p>
+      <p className="mt-7 text-center text-[15px] text-ink-sub">여성·남성 중 선택해 시작하세요</p>
       <div className="mt-3 grid grid-cols-2 gap-3">
         <button
           onClick={() => onStart('female')}
           className="flex items-center justify-center gap-1.5 rounded-full bg-magenta py-4 text-[17px] font-semibold text-white shadow-soft transition-all active:scale-[0.98] hover:bg-magenta-deep"
         >
-          여성 진단
+          여성 체크
           <ChevronRight className="h-5 w-5" />
         </button>
         <button
           onClick={() => onStart('male')}
           className="flex items-center justify-center gap-1.5 rounded-full bg-ink py-4 text-[17px] font-semibold text-white shadow-soft transition-all active:scale-[0.98] hover:bg-ink/85"
         >
-          남성 진단
+          남성 체크
           <ChevronRight className="h-5 w-5" />
         </button>
       </div>

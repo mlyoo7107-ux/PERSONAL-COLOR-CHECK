@@ -144,7 +144,7 @@ export function ResultScreen({
       },
     });
     const link = document.createElement('a');
-    link.download = `COLOR.M_퍼스널컬러_진단결과_${GENDER_LABELS[gender]}.png`;
+    link.download = `COLOR.M_퍼스널컬러_셀프체크결과_${GENDER_LABELS[gender]}.png`;
     link.href = canvas.toDataURL('image/png', 1);
     link.click();
   };
@@ -156,7 +156,7 @@ export function ResultScreen({
         <Sparkles className="h-5 w-5 text-magenta" />
         <h2 className="font-display text-[22px] font-black text-ink">나의 예상 퍼스널컬러</h2>
         <span className="ml-auto rounded-full bg-tone-soft/40 px-3 py-1 text-[13px] font-medium text-tone-deep">
-          {GENDER_LABELS[gender]} 진단
+          {GENDER_LABELS[gender]} 체크
         </span>
       </div>
 
