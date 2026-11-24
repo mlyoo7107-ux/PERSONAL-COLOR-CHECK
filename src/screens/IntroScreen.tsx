@@ -42,7 +42,7 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
         </h1>
 
         {/* Color chips */}
-        <div className="mx-auto my-6 grid w-[168px] grid-cols-3 gap-1.5" aria-hidden="true">
+        <div className="mx-auto my-5 grid w-[132px] grid-cols-3 gap-1" aria-hidden="true">
           {COVER_CHIPS.map((hex, i) => (
             <span
               key={hex}
