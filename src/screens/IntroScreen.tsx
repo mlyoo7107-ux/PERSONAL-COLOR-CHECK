@@ -9,6 +9,13 @@ const PREP_TIPS = [
   { icon: Smartphone, text: '화면 밝기는 중간 이상, 야간 모드·블루라이트 필터는 꺼 주세요.' },
 ];
 
+// 표지 중앙 3×3 컬러칩 (봄·여름·가을 톤의 대표색)
+const COVER_CHIPS = [
+  '#EC7764', '#F3B081', '#F1A256',
+  '#F7D363', '#A9D167', '#7CD1B1',
+  '#72C6BF', '#EF93A0', '#D0A26E',
+];
+
 interface IntroScreenProps {
   onStart: (gender: Gender) => void;
 }
@@ -24,7 +31,7 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
       </div>
 
       {/* Hero card */}
-      <div className="mt-8 rounded-3xl bg-card p-7 shadow-card">
+      <div className="mt-8 rounded-3xl bg-card p-7 text-center shadow-card">
         <div className="mb-5 inline-flex rounded-full bg-tone-soft/40 px-3 py-1">
           <span className="text-[13px] font-medium text-tone-deep">무료 자가진단</span>
         </div>
@@ -33,13 +40,25 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
           <br />
           컬러 찾기
         </h1>
-        <p className="mt-3 text-[17px] leading-relaxed text-ink-sub">
+
+        {/* Color chips */}
+        <div className="mx-auto my-6 grid w-[168px] grid-cols-3 gap-1.5" aria-hidden="true">
+          {COVER_CHIPS.map((hex, i) => (
+            <span
+              key={hex}
+              className="aspect-square rounded-md animate-scale-in"
+              style={{ backgroundColor: hex, animationDelay: `${i * 60}ms`, animationFillMode: 'both' }}
+            />
+          ))}
+        </div>
+
+        <p className="text-[17px] leading-relaxed text-ink-sub">
           간단한 자가진단으로
           <br />
           나와 조화를 이루는 컬러의 방향을 알아보세요.
         </p>
 
-        <div className="mt-5 flex items-center gap-2 text-ink-sub">
+        <div className="mt-5 flex items-center justify-center gap-2 text-ink-sub">
           <Clock className="h-4 w-4 text-tone" />
           <span className="text-[15px]">약 4분 소요</span>
         </div>
